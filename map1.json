@@ -1852,7 +1852,7 @@
   "tilesets": [
     {
       "firstgid": 1,
-      "source": "tilesets\/tmw_desert_spacing.tsx"
+"source": "tilesets\/tmw_desert_spacing.tsx"
     }
   ],
   "tilewidth": 32,
