@@ -41,3 +41,5 @@ MOVEMENT_KEYS = [
     arcade.key.NUM_8,
     arcade.key.NUM_9
 ]
+
+BASE_MOVEMENT_TIME = 4.0
