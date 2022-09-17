@@ -152,6 +152,7 @@ class Game(arcade.Window):
         wall_hit_list = arcade.check_for_collision_with_lists(self.player.sprite,
                                                               [self.scene[constants.LAYER_NAME_FOREGROUND],
                                                                self.scene[constants.LAYER_NAME_WALLS]])
+        # TODO: Plugging in enemy movement to wall collision
         did_collide_with_enemy = arcade.check_for_collision(self.player.sprite, self.enemy.sprite)
 
         if len(wall_hit_list) > 0 or did_collide_with_enemy:

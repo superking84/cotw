@@ -10,10 +10,8 @@ class Enemy(Character):
         super(Enemy, self).__init__()
 
         self.target = None
-        self.next_action = None  # represents the next action the enemy wants to take
-        # how many seconds to complete that action?
-        # if the Enemy wants to do something that takes 5 seconds but only
-        # one second has passed, they will need to wait
+
+        self.next_action = None
         self.time_to_next_action = 0
         self.time_since_last_action = 0
 
@@ -39,8 +37,10 @@ class Enemy(Character):
         self_x = self.sprite.center_x
         self_y = self.sprite.center_y
 
-        return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
+        result = abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
             abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
+        print(result)
+        return result
 
     def select_next_action(self):
         if self.is_next_to_target():
@@ -74,10 +74,11 @@ class Enemy(Character):
         self.time_since_last_action = 0
 
     def attack_target(self):
-        # TODO: placeholder
+        # TODO: Implement combat and remove this placeholder line
         self.target.health -= 1
 
     def move(self):
+        # TODO: Address issue with movement between tiles, as enemy currently seems to get out of alignment
         target_x = self.target.sprite.center_x
         target_y = self.target.sprite.center_y
         start_x = self.sprite.center_x
