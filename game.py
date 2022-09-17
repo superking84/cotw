@@ -1,5 +1,7 @@
 import arcade
 import constants
+from Character import Player, Enemy
+from GameTimer import GameTimer
 
 
 class Game(arcade.Window):
@@ -15,7 +17,10 @@ class Game(arcade.Window):
         self.scene = None
         self.tile_map = None
 
-        self.player_sprite = None
+        self.player = None
+        self.enemy = None
+
+        self.ticks = 0  # seconds
 
         self.keys_pressed = []
 
@@ -24,7 +29,6 @@ class Game(arcade.Window):
         self.move_wait_elapsed = 0
         self.move_delay = constants.FIRST_MOVE_DELAY_SECONDS
 
-        self.end_of_map = 0
         self.level = 1
 
         self.collect_coin_sound = arcade.load_sound(":resources:sounds/coin1.wav")
@@ -34,6 +38,8 @@ class Game(arcade.Window):
 
         self.score = 0
         self.reset_score = True
+
+        self.timer = GameTimer()
 
     def setup(self):
         self.camera = arcade.Camera(self.width, self.height)
@@ -51,17 +57,27 @@ class Game(arcade.Window):
         self.scene.add_sprite_list_after("Player", constants.LAYER_NAME_WALLS)
 
         image_source = ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
-        self.player_sprite = arcade.Sprite(image_source, constants.CHARACTER_SCALING)
-        self.player_sprite.center_x = 48
-        self.player_sprite.center_y = 48
-        self.scene.add_sprite("Player", self.player_sprite)
+        self.player = Player()
+        self.player.setup(10, 10, 10, 10)
+        self.player.sprite = arcade.Sprite(image_source, constants.CHARACTER_SCALING)
+
+        self.player.sprite.center_x = 48
+        self.player.sprite.center_y = 48
+        self.scene.add_sprite("Player", self.player.sprite)
 
         if self.tile_map.background_color:
             arcade.set_background_color(self.tile_map.background_color)
         else:
             arcade.set_background_color(arcade.csscolor.GRAY)
 
-        self.end_of_map = self.tile_map.width * constants.GRID_PIXEL_SIZE
+        enemy_img_src = ":resources:images/animated_characters/zombie/zombie_idle.png"
+        self.enemy = Enemy()
+        self.enemy.setup(10, 10, 10, 10, 20, 5, self.player)
+        self.enemy.sprite = arcade.Sprite(enemy_img_src, constants.CHARACTER_SCALING)
+        self.enemy.sprite.center_x = 240
+        self.enemy.sprite.center_y = 120
+        self.scene.add_sprite("Enemy", self.enemy.sprite)
+        self.timer.register_listener(self.enemy)
 
     def on_draw(self):
         """Render the screen."""
@@ -74,7 +90,7 @@ class Game(arcade.Window):
         self.scene.draw()
 
         self.gui_camera.use()
-        score_text = f"Score: {self.score}"
+        score_text = f"Health: {self.player.health}"
         arcade.draw_text(
             score_text,
             10,
@@ -109,40 +125,42 @@ class Game(arcade.Window):
     def process_movement(self):
         last_key = self.keys_pressed[-1]
 
-        previous_location = [self.player_sprite.center_x, self.player_sprite.center_y]
+        previous_location = [self.player.sprite.center_x, self.player.sprite.center_y]
         match last_key:
             case arcade.key.UP | arcade.key.NUM_8:
-                self.player_sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
             case arcade.key.DOWN | arcade.key.NUM_2:
-                self.player_sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
             case arcade.key.LEFT | arcade.key.NUM_4:
-                self.player_sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
             case arcade.key.RIGHT | arcade.key.NUM_6:
-                self.player_sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
             case arcade.key.NUM_1:
-                self.player_sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
-                self.player_sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
             case arcade.key.NUM_3:
-                self.player_sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
-                self.player_sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
             case arcade.key.NUM_7:
-                self.player_sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
-                self.player_sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
             case arcade.key.NUM_9:
-                self.player_sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
-                self.player_sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
+                self.player.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
 
-        wall_hit_list = arcade.check_for_collision_with_lists(self.player_sprite,
+        wall_hit_list = arcade.check_for_collision_with_lists(self.player.sprite,
                                                               [self.scene[constants.LAYER_NAME_FOREGROUND],
                                                                self.scene[constants.LAYER_NAME_WALLS]])
+        did_collide_with_enemy = arcade.check_for_collision(self.player.sprite, self.enemy.sprite)
 
-        if len(wall_hit_list) > 0:
-            self.player_sprite.center_x = previous_location[0]
-            self.player_sprite.center_y = previous_location[1]
+        if len(wall_hit_list) > 0 or did_collide_with_enemy:
+            self.player.sprite.center_x = previous_location[0]
+            self.player.sprite.center_y = previous_location[1]
+
+        movement_time = self.player.calculate_action_time(constants.MOVEMENT_TIMES[constants.ActionType.MOVE])
+        self.timer.advance_time(movement_time)
 
     def on_update(self, delta_time: float):
-        # self.physics_engine.update()
-
         if self.is_moving and (self.move_wait_elapsed >= self.move_delay):
             if self.move_wait_elapsed >= self.move_delay:
                 self.move_delay = constants.MOVE_DELAY_SECONDS
@@ -155,8 +173,8 @@ class Game(arcade.Window):
             self.move_wait_elapsed += delta_time
 
     def center_camera_to_player(self):
-        screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width / 2)
-        screen_center_y = self.player_sprite.center_y - (self.camera.viewport_height / 2)
+        screen_center_x = self.player.sprite.center_x - (self.camera.viewport_width / 2)
+        screen_center_y = self.player.sprite.center_y - (self.camera.viewport_height / 2)
 
         screen_center_x = max(screen_center_x, 0)
         screen_center_y = max(screen_center_y, 0)
