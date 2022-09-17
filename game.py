@@ -128,27 +128,32 @@ class Game(arcade.Window):
         last_key = self.keys_pressed[-1]
 
         previous_location = [self.player.sprite.center_x, self.player.sprite.center_y]
+        move_x = 0
+        move_y = 0
         match last_key:
-            case arcade.key.UP | arcade.key.NUM_8:
-                self.player.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
-            case arcade.key.DOWN | arcade.key.NUM_2:
-                self.player.sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
-            case arcade.key.LEFT | arcade.key.NUM_4:
-                self.player.sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
-            case arcade.key.RIGHT | arcade.key.NUM_6:
-                self.player.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
-            case arcade.key.NUM_1:
-                self.player.sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
-                self.player.sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
-            case arcade.key.NUM_3:
-                self.player.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
-                self.player.sprite.center_y -= constants.PLAYER_MOVEMENT_SPEED
-            case arcade.key.NUM_7:
-                self.player.sprite.center_x -= constants.PLAYER_MOVEMENT_SPEED
-                self.player.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
-            case arcade.key.NUM_9:
-                self.player.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED
-                self.player.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED
+            case arcade.key.UP | arcade.key.NUM_8 | arcade.key.W:
+                move_y = 1
+            case arcade.key.DOWN | arcade.key.NUM_2 | arcade.key.S:
+                move_y = -1
+            case arcade.key.LEFT | arcade.key.NUM_4 | arcade.key.A:
+                move_x = -1
+            case arcade.key.RIGHT | arcade.key.NUM_6 | arcade.key.D:
+                move_x = 1
+            case arcade.key.NUM_1 | arcade.key.Z:
+                move_x = -1
+                move_y = -1
+            case arcade.key.NUM_3 | arcade.key.C:
+                move_x = 1
+                move_y = -1
+            case arcade.key.NUM_7 | arcade.key.Q:
+                move_x = -1
+                move_y = 1
+            case arcade.key.NUM_9 | arcade.key.E:
+                move_x = 1
+                move_y = 1
+
+        self.player.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED * move_x
+        self.player.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED * move_y
 
         wall_hit_list = arcade.check_for_collision_with_lists(self.player.sprite,
                                                               [self.scene[constants.LAYER_NAME_FOREGROUND],
@@ -162,9 +167,16 @@ class Game(arcade.Window):
 
             if did_collide_with_enemy:
                 self.enemy.health -= 1
+        else:
+            print(move_x)
+            print(move_y)
+            if move_x == 0 or move_y == 0:
+                action_type = constants.ActionType.MOVE
+            else:
+                action_type = constants.ActionType.MOVE_DIAGONAL
 
-        movement_time = self.player.calculate_action_time(constants.MOVEMENT_TIMES[constants.ActionType.MOVE])
-        self.timer.advance_time(movement_time)
+            movement_time = self.player.calculate_action_time(constants.MOVEMENT_TIMES[action_type])
+            self.timer.advance_time(movement_time)
 
     def on_update(self, delta_time: float):
         if self.is_moving and (self.move_wait_elapsed >= self.move_delay):

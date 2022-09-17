@@ -62,10 +62,8 @@ class Enemy(Character):
                 if target_y < self.sprite.center_y else 0
 
             if move_x == 0 or move_y == 0:
-                print("MOVE")
                 self.next_action = ActionType.MOVE
             else:
-                print("MOVE_DIAGONAL")
                 self.next_action = ActionType.MOVE_DIAGONAL
 
             self.destination = (move_x, move_y)
