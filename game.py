@@ -91,7 +91,7 @@ class Game(arcade.Window):
         self.scene.draw()
 
         self.gui_camera.use()
-        score_text = f"Health: {self.player.health}"
+        score_text = f"Player Health: {self.player.health}.  Enemy Health: {self.enemy.health}"
         arcade.draw_text(
             score_text,
             10,
@@ -157,6 +157,9 @@ class Game(arcade.Window):
         if len(wall_hit_list) > 0 or did_collide_with_enemy:
             self.player.sprite.center_x = previous_location[0]
             self.player.sprite.center_y = previous_location[1]
+
+            if did_collide_with_enemy:
+                self.enemy.health -= 1
 
         movement_time = self.player.calculate_action_time(constants.MOVEMENT_TIMES[constants.ActionType.MOVE])
         self.timer.advance_time(movement_time)
