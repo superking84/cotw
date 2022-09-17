@@ -91,7 +91,8 @@ class Game(arcade.Window):
         self.scene.draw()
 
         self.gui_camera.use()
-        score_text = f"Player Health: {self.player.health}.  Enemy Health: {self.enemy.health}"
+        score_text = f"Game time: {self.timer.get_game_time()}"
+        # score_text = f"Player Health: {self.player.health}.  Enemy Health: {self.enemy.health}"
         arcade.draw_text(
             score_text,
             10,

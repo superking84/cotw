@@ -10,6 +10,7 @@ class Enemy(Character):
         super(Enemy, self).__init__()
 
         self.target = None
+        self.destination = (None, None)
 
         self.next_action = None
         self.time_to_next_action = 0
@@ -23,6 +24,7 @@ class Enemy(Character):
         self.health = health
         self.mana = mana
         self.target = target
+
         self.select_next_action()
 
         self.speed = 0.5
@@ -37,18 +39,39 @@ class Enemy(Character):
         self_x = self.sprite.center_x
         self_y = self.sprite.center_y
 
-        result = abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
+        return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
             abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
-        print(result)
-        return result
 
     def select_next_action(self):
+        if not (self.target and self.sprite):
+            return
+
         if self.is_next_to_target():
             self.next_action = ActionType.ATTACK
         else:
-            self.next_action = ActionType.MOVE
+            target_x = self.target.sprite.center_x
+            target_y = self.target.sprite.center_y
 
-        self.time_to_next_action = (constants.MOVEMENT_TIMES[self.next_action] - self.time_since_last_action) / self.speed
+            move_x = constants.PLAYER_MOVEMENT_SPEED \
+                if target_x > self.sprite.center_x \
+                else -constants.PLAYER_MOVEMENT_SPEED \
+                if target_x < self.sprite.center_x else 0
+            move_y = constants.PLAYER_MOVEMENT_SPEED \
+                if target_y > self.sprite.center_y \
+                else -constants.PLAYER_MOVEMENT_SPEED \
+                if target_y < self.sprite.center_y else 0
+
+            if move_x == 0 or move_y == 0:
+                print("MOVE")
+                self.next_action = ActionType.MOVE
+            else:
+                print("MOVE_DIAGONAL")
+                self.next_action = ActionType.MOVE_DIAGONAL
+
+            self.destination = (move_x, move_y)
+
+        self.time_to_next_action = (constants.MOVEMENT_TIMES[self.next_action] -
+                                    self.time_since_last_action) / self.speed
 
         self.time_since_last_action = 0
 
@@ -66,7 +89,7 @@ class Enemy(Character):
             self.select_next_action()
 
     def execute_next_action(self):
-        if self.next_action == ActionType.MOVE:
+        if self.next_action in [ActionType.MOVE, ActionType.MOVE_DIAGONAL]:
             self.move()
         else:
             self.attack_target()
@@ -79,26 +102,14 @@ class Enemy(Character):
 
     def move(self):
         # TODO: Address issue with movement between tiles, as enemy currently seems to get out of alignment
-        target_x = self.target.sprite.center_x
-        target_y = self.target.sprite.center_y
         start_x = self.sprite.center_x
         start_y = self.sprite.center_y
 
-        move_x = constants.PLAYER_MOVEMENT_SPEED \
-            if target_x > self.sprite.center_x \
-            else -constants.PLAYER_MOVEMENT_SPEED \
-            if target_x < self.sprite.center_x else 0
-        move_y = constants.PLAYER_MOVEMENT_SPEED \
-            if target_y > self.sprite.center_y \
-            else -constants.PLAYER_MOVEMENT_SPEED \
-            if target_y < self.sprite.center_y else 0
+        self.sprite.center_x += self.destination[0]
+        self.sprite.center_y += self.destination[1]
 
         did_collide_with_enemy = arcade.check_for_collision(self.sprite, self.target.sprite)
-
-        self.sprite.center_x += move_x
-        self.sprite.center_y += move_y
         if did_collide_with_enemy:
-            print("Collision")
             self.sprite.center_x = start_x
             self.sprite.center_y = start_y
             self.select_next_action()
