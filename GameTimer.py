@@ -1,5 +1,4 @@
-# from Character import Enemy
-from Character import Enemy
+from Enemy import Enemy
 
 DEFAULT_TIME_STEP = 5
 

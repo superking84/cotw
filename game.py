@@ -1,7 +1,8 @@
 import arcade
 import constants
-from Character import Player, Enemy
+from Enemy import Enemy
 from GameTimer import GameTimer
+from Player import Player
 
 
 class Game(arcade.Window):
