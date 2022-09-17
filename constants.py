@@ -1,4 +1,5 @@
 import arcade
+from ActionTypes import ActionType
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -42,4 +43,7 @@ MOVEMENT_KEYS = [
     arcade.key.NUM_9
 ]
 
-BASE_MOVEMENT_TIME = 4.0
+MOVEMENT_TIMES = {
+    ActionType.MOVE: 4.0,
+    ActionType.ATTACK: 5.0
+}
