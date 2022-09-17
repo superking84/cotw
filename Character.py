@@ -1,5 +1,6 @@
-from GameTimer import GameTimer
-from constants import BASE_MOVEMENT_TIME
+import arcade
+import constants
+from constants import ActionType, MOVEMENT_TIMES
 
 
 class Character:
@@ -21,7 +22,7 @@ class Character:
         self.constitution = 0
 
         # calculated stats
-        self.health = 0
+        self.health = 100
         self.mana = 0
         self.speed = 1.00
 
@@ -53,32 +54,92 @@ class Enemy(Character):
         # if the Enemy wants to do something that takes 5 seconds but only
         # one second has passed, they will need to wait
         self.time_to_next_action = 0
+        self.time_since_last_action = 0
 
     def setup(self, strength: int, dexterity: int, intelligence: int,
               constitution: int, health: int, mana: int, target: Character):
         super(Enemy, self).setup(strength, dexterity, intelligence,
-                                 constitution, health, mana)
+                                 constitution)
 
+        self.health = health
+        self.mana = mana
         self.target = target
+        self.select_next_action()
+
+        self.speed = 0.5
+
+    def is_next_to_target(self):
+        if not self.sprite:
+            return
+
+        target_x = self.target.sprite.center_x
+        target_y = self.target.sprite.center_y
+
+        self_x = self.sprite.center_x
+        self_y = self.sprite.center_y
+
+        return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
+            abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
+
+    def select_next_action(self):
+        if self.is_next_to_target():
+            self.next_action = ActionType.ATTACK
+        else:
+            self.next_action = ActionType.MOVE
+
+        self.time_to_next_action = (MOVEMENT_TIMES[self.next_action] - self.time_since_last_action) / self.speed
+
+        self.time_since_last_action = 0
 
     def process_time(self, elapsed_time: int):
         """
-        TODO: Think about an enemy being able to change actions? Cash in elapsed time toward new action
-        TODO: That is, if move takes 5 and they decide to change to attack which takes 6,
-        TODO: they should only have to wait 1 more second
-        TODO: this makes sense to me since actions are discrete and not continuous in this game engine.
-
         :param elapsed_time: driven by game timer ticks, this is the amount of time that has
         passed since the last tick
         :return: None
         """
         self.time_to_next_action -= elapsed_time
+        self.time_since_last_action += elapsed_time
 
         if self.time_to_next_action <= 0:
-            # perform next action
-            # select new action
-            # reset timer based on time needed
-            return
+            self.execute_next_action()
+            self.select_next_action()
+
+    def execute_next_action(self):
+        if self.next_action == ActionType.MOVE:
+            self.move()
+        else:
+            self.attack_target()
+
+        self.time_since_last_action = 0
+
+    def attack_target(self):
+        # TODO: placeholder
+        self.target.health -= 1
+
+    def move(self):
+        target_x = self.target.sprite.center_x
+        target_y = self.target.sprite.center_y
+        start_x = self.sprite.center_x
+        start_y = self.sprite.center_y
+
+        move_x = constants.PLAYER_MOVEMENT_SPEED \
+            if target_x > self.sprite.center_x \
+            else -constants.PLAYER_MOVEMENT_SPEED \
+            if target_x < self.sprite.center_x else 0
+        move_y = constants.PLAYER_MOVEMENT_SPEED \
+            if target_y > self.sprite.center_y \
+            else -constants.PLAYER_MOVEMENT_SPEED \
+            if target_y < self.sprite.center_y else 0
+
+        did_collide_with_enemy = arcade.check_for_collision(self.sprite, self.target.sprite)
+
+        self.sprite.center_x += move_x
+        self.sprite.center_y += move_y
+        if did_collide_with_enemy:
+            print("Collision")
+            self.sprite.center_x = start_x
+            self.sprite.center_y = start_y
+            self.select_next_action()
 
 
 class Player(Character):
