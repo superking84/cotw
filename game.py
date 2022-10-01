@@ -1,4 +1,5 @@
 import arcade
+
 import constants
 from Enemy import Enemy
 from GameTimer import GameTimer
@@ -68,7 +69,7 @@ class Game(arcade.Window):
 
         enemy_img_src = ":resources:images/animated_characters/zombie/zombie_idle.png"
         self.enemy = Enemy()
-        self.enemy.setup(10, 10, 10, 10, 20, 5, self.player)
+        self.enemy.setup(10, 10, 10, 10, 20, 5, scene=self.scene, target=self.player)
         self.enemy.sprite = arcade.Sprite(enemy_img_src, constants.CHARACTER_SCALING)
         self.enemy.sprite.center_x = 240
         self.enemy.sprite.center_y = 120
@@ -97,28 +98,26 @@ class Game(arcade.Window):
         )
 
     def on_key_press(self, key: int, modifiers: int):
-        self.keys_pressed.append(key)
+        if key not in self.keys_pressed:
+            self.keys_pressed.append(key)
 
-        self.player.on_key_press(key)
-        if key in constants.MOVEMENT_KEYS:
-            self.process_movement()
-            self.center_camera_to_player()
+            self.player.on_key_press(key)
+            if key in constants.MOVEMENT_KEYS:
+                self.process_movement()
+                self.center_camera_to_player()
 
-        match key:
-            case arcade.key.ESCAPE:
-                arcade.exit()
+            match key:
+                case arcade.key.ESCAPE:
+                    arcade.exit()
 
     def on_key_release(self, key: int, modifiers: int):
-        self.keys_pressed.remove(key)
+        if key in self.keys_pressed:
+            self.keys_pressed.remove(key)
 
-        self.player.on_key_release(
-            key,
-            self.keys_pressed
-        )
+            self.player.on_key_release(self.keys_pressed)
 
     def process_movement(self):
         action_time = self.player.process_movement(self.keys_pressed, self.scene, self.enemy)
-        print(action_time)
         if action_time > 0:
             self.timer.advance_time(action_time)
 
