@@ -9,6 +9,7 @@ class Enemy(Character):
     def __init__(self):
         super(Enemy, self).__init__()
 
+        self.scene = None
         self.target = None
         self.destination = (None, None)
 
@@ -17,10 +18,11 @@ class Enemy(Character):
         self.time_since_last_action = 0
 
     def setup(self, strength: int, dexterity: int, intelligence: int,
-              constitution: int, health: int, mana: int, target: Character):
+              constitution: int, health: int, mana: int, scene: arcade.Scene, target: Character):
         super(Enemy, self).setup(strength, dexterity, intelligence,
                                  constitution)
 
+        self.scene = scene
         self.health = health
         self.mana = mana
         self.target = target
@@ -39,8 +41,11 @@ class Enemy(Character):
         self_x = self.sprite.center_x
         self_y = self.sprite.center_y
 
+        print(abs(self_x - target_x))
+        print(abs(self_y - target_y))
+        print(constants.PLAYER_MOVEMENT_SPEED)
         return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
-            abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
+               abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
 
     def select_next_action(self):
         if not (self.target and self.sprite):
@@ -91,9 +96,10 @@ class Enemy(Character):
         if self.next_action in [ActionType.MOVE, ActionType.MOVE_DIAGONAL]:
             self.move()
         elif self.next_action == ActionType.ATTACK:
+            print("About to attack")
             self.attack_target()
         else:
-            raise Exception("Nothing here yet!")
+            return
 
         self.time_since_last_action = 0
 
@@ -110,8 +116,12 @@ class Enemy(Character):
         self.sprite.center_x += self.destination[0]
         self.sprite.center_y += self.destination[1]
 
-        did_collide_with_enemy = arcade.check_for_collision(self.sprite, self.target.sprite)
-        if did_collide_with_enemy:
+        did_collide_with_target = arcade.check_for_collision(self.sprite, self.target.sprite)
+        wall_hit_list = arcade.check_for_collision_with_lists(self.sprite, [self.scene[constants.LAYER_NAME_FOREGROUND],
+                                                                            self.scene[constants.LAYER_NAME_WALLS]])
+        if did_collide_with_target or len(wall_hit_list) > 0:
             self.sprite.center_x = start_x
             self.sprite.center_y = start_y
-            self.select_next_action()
+            if did_collide_with_target:
+                print("About to select next action")
+                self.select_next_action()
