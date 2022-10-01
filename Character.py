@@ -40,5 +40,9 @@ class Character:
         """
         Determine the time the character will take to complete
         a given action.
+        :param base_completion_time: The amount of time an action normally
+        takes to complete, before modification.
+        :return: The amount of time the action will take to complete given
+        other factors affecting the character.
         """
         return base_completion_time / self.speed

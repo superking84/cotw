@@ -19,9 +19,19 @@ class GameTimer:
         self.listeners = []
 
     def register_listener(self, listener: Enemy):
+        """
+        Add an Enemy to the list of Enemy objects currently receiving time
+        updates from the GameTimer.
+        :return: None
+        """
         self.listeners.append(listener)
 
     def advance_time(self, elapsed_time: int):
+        """
+        Increase the elapsed in-game time by the specified number of seconds.
+        :param elapsed_time: An amount of time in seconds.
+        :return: None
+        """
         elapsed_time = elapsed_time or DEFAULT_TIME_STEP
 
         # if action_type is not None:
@@ -36,12 +46,21 @@ class GameTimer:
             listener.process_time(elapsed_time)
 
     def tick(self):
+        """
+        Advance the game by one tick. Ticks are distinct from game time, as
+        :return:
+        """
         if self.player_has_control:
             return
 
         self.advance_time(None)
 
     def update_game_time(self, elapsed_time: int):
+        """
+        Calculates the seconds, minutes, hours, and days of elapsed in-game time.
+        :param elapsed_time: The total elapsed time, in seconds.
+        :return:
+        """
         self.seconds_elapsed += elapsed_time
         if self.seconds_elapsed >= 60:
             self.seconds_elapsed %= 60

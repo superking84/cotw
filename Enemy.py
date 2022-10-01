@@ -75,6 +75,7 @@ class Enemy(Character):
 
     def process_time(self, elapsed_time: int):
         """
+        Check if it is time to perform the next action, and do so if possible.
         :param elapsed_time: driven by game timer ticks, this is the amount of time that has
         passed since the last tick
         :return: None
@@ -89,13 +90,16 @@ class Enemy(Character):
     def execute_next_action(self):
         if self.next_action in [ActionType.MOVE, ActionType.MOVE_DIAGONAL]:
             self.move()
-        else:
+        elif self.next_action == ActionType.ATTACK:
             self.attack_target()
+        else:
+            raise Exception("Nothing here yet!")
 
         self.time_since_last_action = 0
 
     def attack_target(self):
         # TODO: Implement combat and remove this placeholder line
+        print("Attack!")
         self.target.health -= 1
 
     def move(self):
