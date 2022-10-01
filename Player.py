@@ -1,4 +1,5 @@
 import arcade
+
 import constants
 from Character import Character
 from Enemy import Enemy
@@ -20,13 +21,16 @@ class Player(Character):
             self.first_move_complete = True
             self.move_wait_elapsed = 0
 
-    def on_key_release(self, key: arcade.key, keys_pressed: list):
+    def on_key_release(self, keys_pressed: list):
         if not any([_key in constants.MOVEMENT_KEYS for _key in keys_pressed]):
             self.first_move_complete = False
             self.move_wait_elapsed = 0
             self.is_moving = False
 
     def process_movement(self, keys_pressed: list, scene: arcade.Scene, enemy: Enemy):
+        """
+        :return: The elapsed time in seconds after movement is complete.
+        """
         last_key = keys_pressed[-1]
 
         previous_location = [self.sprite.center_x, self.sprite.center_y]
@@ -79,4 +83,3 @@ class Player(Character):
                 action_type = constants.ActionType.MOVE_DIAGONAL
 
         return self.calculate_action_time(constants.MOVEMENT_TIMES[action_type])
-
