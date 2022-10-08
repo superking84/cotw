@@ -62,12 +62,12 @@ class Game(arcade.Window):
         else:
             arcade.set_background_color(arcade.csscolor.GRAY)
 
-        enemy_img_src = ":resources:images/animated_characters/zombie/zombie_idle.png"
+        enemy_img_src = "images/zombie_idle.png"
         self.enemy = Enemy()
         self.enemy.setup(10, 10, 10, 10, 20, 5, scene=self.scene, target=self.player)
         self.enemy.sprite = arcade.Sprite(enemy_img_src, constants.CHARACTER_SCALING)
-        self.enemy.sprite.center_x = 240
-        self.enemy.sprite.center_y = 120
+        self.enemy.sprite.center_x = constants.ENEMY_START_X
+        self.enemy.sprite.center_y = constants.ENEMY_START_Y
         self.scene.add_sprite("Enemy", self.enemy.sprite)
         self.timer.register_listener(self.enemy)
 
