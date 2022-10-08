@@ -5,8 +5,8 @@ from Character import Character
 
 
 class Player(Character):
-    def __init__(self):
-        super(Player, self).__init__()
+    def __init__(self, img_src: str, center_x: int, center_y: int):
+        super(Player, self).__init__(img_src, center_x, center_y)
 
         self.is_moving = False
         self.first_move_complete = False

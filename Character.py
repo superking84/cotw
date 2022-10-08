@@ -1,17 +1,17 @@
 import arcade
+
 import constants
-from constants import ActionType, MOVEMENT_TIMES
 
 
-class Character:
+class Character(arcade.Sprite):
     """
     The base class for all characters in the game.
     Base functionality is inherited by Player, Enemy
     and any other "character"-type entities in the game.
     """
 
-    def __init__(self):
-        self.sprite = None
+    def __init__(self, img_src: str, center_x: int, center_y: int):
+        super(Character, self).__init__(img_src, constants.CHARACTER_SCALING, center_x=center_x, center_y=center_y)
 
         self.level = 1
 

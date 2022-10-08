@@ -6,8 +6,8 @@ from Character import Character
 
 
 class Enemy(Character):
-    def __init__(self):
-        super(Enemy, self).__init__()
+    def __init__(self, img_src: str, center_x: int, center_y: int):
+        super(Enemy, self).__init__(img_src, center_x, center_y)
 
         self.scene = None
         self.target = None
@@ -32,36 +32,33 @@ class Enemy(Character):
         self.speed = 0.5
 
     def is_next_to_target(self):
-        if not self.sprite:
-            return
+        target_x = self.target.center_x
+        target_y = self.target.center_y
 
-        target_x = self.target.sprite.center_x
-        target_y = self.target.sprite.center_y
-
-        self_x = self.sprite.center_x
-        self_y = self.sprite.center_y
+        self_x = self.center_x
+        self_y = self.center_y
 
         return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
                abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
 
     def select_next_action(self):
-        if not (self.target and self.sprite):
+        if not self.target:
             return
 
         if self.is_next_to_target():
             self.next_action = ActionType.ATTACK
         else:
-            target_x = self.target.sprite.center_x
-            target_y = self.target.sprite.center_y
+            target_x = self.target.center_x
+            target_y = self.target.center_y
 
             move_x = constants.PLAYER_MOVEMENT_SPEED \
-                if target_x > self.sprite.center_x \
+                if target_x > self.center_x \
                 else -constants.PLAYER_MOVEMENT_SPEED \
-                if target_x < self.sprite.center_x else 0
+                if target_x < self.center_x else 0
             move_y = constants.PLAYER_MOVEMENT_SPEED \
-                if target_y > self.sprite.center_y \
+                if target_y > self.center_y \
                 else -constants.PLAYER_MOVEMENT_SPEED \
-                if target_y < self.sprite.center_y else 0
+                if target_y < self.center_y else 0
 
             if move_x == 0 or move_y == 0:
                 self.next_action = ActionType.MOVE
@@ -105,18 +102,17 @@ class Enemy(Character):
 
     def move(self):
         # TODO: Address issue with movement between tiles, as enemy currently seems to get out of alignment
-        start_x = self.sprite.center_x
-        start_y = self.sprite.center_y
+        start_x = self.center_x
+        start_y = self.center_y
 
-        self.sprite.center_x += self.destination[0]
-        self.sprite.center_y += self.destination[1]
+        self.center_x += self.destination[0]
+        self.center_y += self.destination[1]
 
-        did_collide_with_target = arcade.check_for_collision(self.sprite, self.target.sprite)
-        wall_hit_list = arcade.check_for_collision_with_lists(self.sprite, [self.scene[constants.LAYER_NAME_FOREGROUND],
-                                                                            self.scene[constants.LAYER_NAME_WALLS]])
+        did_collide_with_target = arcade.check_for_collision(self, self.target)
+        wall_hit_list = arcade.check_for_collision_with_lists(self, [self.scene[constants.LAYER_NAME_FOREGROUND],
+                                                                     self.scene[constants.LAYER_NAME_WALLS]])
         if did_collide_with_target or len(wall_hit_list) > 0:
-            self.sprite.center_x = start_x
-            self.sprite.center_y = start_y
+            self.center_x = start_x
+            self.center_y = start_y
             if did_collide_with_target:
-                print("About to select next action")
                 self.select_next_action()
