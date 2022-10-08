@@ -24,7 +24,19 @@ class GameTimer:
         updates from the GameTimer.
         :return: None
         """
-        self.listeners.append(listener)
+        if listener not in self.listeners:
+            self.listeners.append(listener)
+
+    def unregister_listener(self, listener: Enemy):
+        """
+        Remove an Enemy from the list of Enemy objects currently receiving time
+        updates from the GameTimer.
+        :return: None
+        """
+        if listener in self.listeners:
+            listener_index = self.listeners.index(listener)
+
+            self.listeners.pop(listener_index)
 
     def advance_time(self, elapsed_time: int):
         """
