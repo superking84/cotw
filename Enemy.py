@@ -41,9 +41,6 @@ class Enemy(Character):
         self_x = self.sprite.center_x
         self_y = self.sprite.center_y
 
-        print(abs(self_x - target_x))
-        print(abs(self_y - target_y))
-        print(constants.PLAYER_MOVEMENT_SPEED)
         return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
                abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
 
@@ -96,7 +93,6 @@ class Enemy(Character):
         if self.next_action in [ActionType.MOVE, ActionType.MOVE_DIAGONAL]:
             self.move()
         elif self.next_action == ActionType.ATTACK:
-            print("About to attack")
             self.attack_target()
         else:
             return
@@ -105,7 +101,6 @@ class Enemy(Character):
 
     def attack_target(self):
         # TODO: Implement combat and remove this placeholder line
-        print("Attack!")
         self.target.health -= 1
 
     def move(self):
