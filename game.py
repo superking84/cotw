@@ -1,6 +1,7 @@
 import arcade
 
 import constants
+from ActionTypes import ActionType
 from Enemy import Enemy
 from GameTimer import GameTimer
 from Player import Player
@@ -79,6 +80,8 @@ class Game(arcade.Window):
         self.scene.add_sprite(constants.LAYER_NAME_ENEMIES, self.enemy.sprite)
         self.timer.register_listener(self.enemy)
 
+        self.center_camera_to_player()
+
     def on_draw(self):
         """Render the screen."""
 
@@ -120,7 +123,29 @@ class Game(arcade.Window):
             self.player.on_key_release(self.keys_pressed)
 
     def process_movement(self):
-        action_time = self.player.process_movement(self.keys_pressed, self.scene)
+        (move_x, move_y) = self.player.get_movement_direction(self.keys_pressed)
+
+        previous_location = [self.player.sprite.center_x, self.player.sprite.center_y]
+        self.player.sprite.set_position(
+            self.player.sprite.center_x + (move_x * constants.PLAYER_MOVEMENT_SPEED),
+            self.player.sprite.center_y + (move_y * constants.PLAYER_MOVEMENT_SPEED)
+        )
+
+        wall_hit_list = arcade.check_for_collision_with_lists(self.player.sprite,
+                                                              [self.scene[constants.LAYER_NAME_FOREGROUND],
+                                                               self.scene[constants.LAYER_NAME_WALLS]])
+        enemy_hit_list = arcade.check_for_collision_with_list(self.player.sprite,
+                                                              self.scene[constants.LAYER_NAME_ENEMIES])
+
+        action_type = ActionType.MOVE if move_x == 0 or move_y == 0 else ActionType.MOVE_DIAGONAL
+        if len(wall_hit_list) > 0:
+            self.player.sprite.set_position(previous_location[0], previous_location[1])
+        elif len(enemy_hit_list) > 0:
+            self.player.sprite.set_position(previous_location[0], previous_location[1])
+            action_type = ActionType.ATTACK
+            self.enemy.health -= 1
+
+        action_time = self.player.calculate_action_time(constants.MOVEMENT_TIMES[action_type])
         if action_time > 0:
             self.timer.advance_time(action_time)
 

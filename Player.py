@@ -2,7 +2,6 @@ import arcade
 
 import constants
 from Character import Character
-from Enemy import Enemy
 
 
 class Player(Character):
@@ -27,13 +26,13 @@ class Player(Character):
             self.move_wait_elapsed = 0
             self.is_moving = False
 
-    def process_movement(self, keys_pressed: list, scene: arcade.Scene, enemy: Enemy):
+    def get_movement_direction(self, keys_pressed: list):
         """
-        :return: The elapsed time in seconds after movement is complete.
+        :return: A 2-tuple (x, y) which represents the type of movement resulting
+        from the keypress.
         """
         last_key = keys_pressed[-1]
 
-        previous_location = [self.sprite.center_x, self.sprite.center_y]
         move_x = 0
         move_y = 0
         match last_key:
@@ -58,28 +57,4 @@ class Player(Character):
                 move_x = 1
                 move_y = 1
 
-        self.sprite.center_x += constants.PLAYER_MOVEMENT_SPEED * move_x
-        self.sprite.center_y += constants.PLAYER_MOVEMENT_SPEED * move_y
-
-        wall_hit_list = arcade.check_for_collision_with_lists(self.sprite,
-                                                              [scene[constants.LAYER_NAME_FOREGROUND],
-                                                               scene[constants.LAYER_NAME_WALLS]])
-        # TODO: Plugging in enemy movement to wall collision
-        did_collide_with_enemy = arcade.check_for_collision(self.sprite, enemy.sprite)
-
-        if len(wall_hit_list) > 0:
-            self.sprite.center_x = previous_location[0]
-            self.sprite.center_y = previous_location[1]
-            return 0
-        elif did_collide_with_enemy:
-            self.sprite.center_x = previous_location[0]
-            self.sprite.center_y = previous_location[1]
-            action_type = constants.ActionType.ATTACK
-            enemy.health -= 1
-        else:
-            if move_x == 0 or move_y == 0:
-                action_type = constants.ActionType.MOVE
-            else:
-                action_type = constants.ActionType.MOVE_DIAGONAL
-
-        return self.calculate_action_time(constants.MOVEMENT_TIMES[action_type])
+        return move_x, move_y
