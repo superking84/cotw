@@ -28,11 +28,6 @@ class Game(arcade.Window):
 
         self.level = 1
 
-        self.collect_coin_sound = arcade.load_sound(":resources:sounds/coin1.wav")
-        self.collect_last_coin_sound = arcade.load_sound(":resources:sounds/coin2.wav")
-        self.jump_sound = arcade.load_sound(":resources:sounds/jump1.wav")
-        self.game_over = arcade.load_sound(":resources:sounds/gameover1.wav")
-
         self.score = 0
         self.reset_score = True
 
@@ -53,13 +48,13 @@ class Game(arcade.Window):
 
         self.scene.add_sprite_list_after("Player", constants.LAYER_NAME_WALLS)
 
-        image_source = ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
+        image_source = "images/femaleAdventurer_idle.png"
         self.player = Player()
         self.player.setup(10, 10, 10, 10)
         self.player.sprite = arcade.Sprite(image_source, constants.CHARACTER_SCALING)
 
-        self.player.sprite.center_x = 48
-        self.player.sprite.center_y = 48
+        self.player.sprite.center_x = constants.PLAYER_START_X
+        self.player.sprite.center_y = constants.PLAYER_START_Y
         self.scene.add_sprite("Player", self.player.sprite)
 
         if self.tile_map.background_color:
