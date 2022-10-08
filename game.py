@@ -46,8 +46,8 @@ class Game(arcade.Window):
             self.score = 0
         self.reset_score = True
 
-        self.scene.add_sprite_list_after("Player", constants.LAYER_NAME_WALLS)
-
+        self.scene.add_sprite_list_after(constants.LAYER_NAME_PLAYER, constants.LAYER_NAME_WALLS)
+        self.scene.add_sprite_list_after(constants.LAYER_NAME_ENEMIES, constants.LAYER_NAME_PLAYER)
         image_source = "images/femaleAdventurer_idle.png"
         self.player = Player()
         self.player.setup(10, 10, 10, 10)
@@ -55,7 +55,7 @@ class Game(arcade.Window):
 
         self.player.sprite.center_x = constants.PLAYER_START_X
         self.player.sprite.center_y = constants.PLAYER_START_Y
-        self.scene.add_sprite("Player", self.player.sprite)
+        self.scene.add_sprite(constants.LAYER_NAME_PLAYER, self.player.sprite)
 
         if self.tile_map.background_color:
             arcade.set_background_color(self.tile_map.background_color)
@@ -64,11 +64,19 @@ class Game(arcade.Window):
 
         enemy_img_src = "images/zombie_idle.png"
         self.enemy = Enemy()
-        self.enemy.setup(10, 10, 10, 10, 20, 5, scene=self.scene, target=self.player)
+        self.enemy.setup(
+            strength=10,
+            dexterity=10,
+            intelligence=10, constitution=10,
+            health=5,
+            mana=5,
+            scene=self.scene,
+            target=self.player
+        )
         self.enemy.sprite = arcade.Sprite(enemy_img_src, constants.CHARACTER_SCALING)
         self.enemy.sprite.center_x = constants.ENEMY_START_X
         self.enemy.sprite.center_y = constants.ENEMY_START_Y
-        self.scene.add_sprite("Enemy", self.enemy.sprite)
+        self.scene.add_sprite(constants.LAYER_NAME_ENEMIES, self.enemy.sprite)
         self.timer.register_listener(self.enemy)
 
     def on_draw(self):
@@ -112,9 +120,13 @@ class Game(arcade.Window):
             self.player.on_key_release(self.keys_pressed)
 
     def process_movement(self):
-        action_time = self.player.process_movement(self.keys_pressed, self.scene, self.enemy)
+        action_time = self.player.process_movement(self.keys_pressed, self.scene)
         if action_time > 0:
             self.timer.advance_time(action_time)
+
+            if self.enemy.health <= 0:
+                self.timer.unregister_listener(self.enemy)
+                self.enemy.sprite.kill()
 
     def on_update(self, delta_time: float):
         if self.player.is_moving and (self.player.move_wait_elapsed >= self.player.move_delay):
