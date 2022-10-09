@@ -14,7 +14,6 @@ class Enemy(Character):
         self.destination = (None, None)
 
         self.next_action = None
-        self.time_to_next_action = 0
         self.time_since_last_action = 0
 
     def setup(self, strength: int, dexterity: int, intelligence: int,
@@ -67,11 +66,6 @@ class Enemy(Character):
 
             self.destination = (move_x, move_y)
 
-        self.time_to_next_action = (constants.MOVEMENT_TIMES[self.next_action] -
-                                    self.time_since_last_action) / self.speed
-
-        self.time_since_last_action = 0
-
     def process_time(self, elapsed_time: int):
         """
         Check if it is time to perform the next action, and do so if possible.
@@ -79,12 +73,18 @@ class Enemy(Character):
         passed since the last tick
         :return: None
         """
-        self.time_to_next_action -= elapsed_time
-        self.time_since_last_action += elapsed_time
-
-        if self.time_to_next_action <= 0:
-            self.execute_next_action()
+        if not self.next_action:
             self.select_next_action()
+
+        self.time_since_last_action += elapsed_time
+        while True:
+            action_time = self.calculate_action_time(constants.ACTION_TIMES[self.next_action])
+            if self.time_since_last_action >= action_time:
+                self.time_since_last_action -= action_time
+                self.execute_next_action()
+                self.select_next_action()
+            else:
+                break
 
     def execute_next_action(self):
         if self.next_action in [ActionType.MOVE, ActionType.MOVE_DIAGONAL]:
@@ -94,7 +94,7 @@ class Enemy(Character):
         else:
             return
 
-        self.time_since_last_action = 0
+        self.next_action = None
 
     def attack_target(self):
         # TODO: Implement combat and remove this placeholder line
@@ -111,8 +111,10 @@ class Enemy(Character):
         did_collide_with_target = arcade.check_for_collision(self, self.target)
         wall_hit_list = arcade.check_for_collision_with_lists(self, [self.scene[constants.LAYER_NAME_FOREGROUND],
                                                                      self.scene[constants.LAYER_NAME_WALLS]])
-        if did_collide_with_target or len(wall_hit_list) > 0:
+        enemy_hit_list = arcade.check_for_collision_with_list(self, self.scene[constants.LAYER_NAME_ENEMIES])
+
+        if did_collide_with_target or len(wall_hit_list) > 0 or len(enemy_hit_list) > 0:
             self.center_x = start_x
             self.center_y = start_y
-            if did_collide_with_target:
-                self.select_next_action()
+            # if did_collide_with_target:
+            #     self.select_next_action()
