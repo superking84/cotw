@@ -58,6 +58,7 @@ class Game(arcade.Window):
             arcade.set_background_color(arcade.csscolor.GRAY)
 
         self.add_enemy_to_scene()
+        self.add_enemy_to_scene()
         self.center_camera_to_player()
 
     def add_enemy_to_scene(self):
@@ -139,8 +140,8 @@ class Game(arcade.Window):
         wall_hit_list = arcade.check_for_collision_with_lists(self.player,
                                                               [self.scene[constants.LAYER_NAME_FOREGROUND],
                                                                self.scene[constants.LAYER_NAME_WALLS]])
-        enemy_hit_list = arcade.check_for_collision_with_list(self.player,
-                                                              self.scene[constants.LAYER_NAME_ENEMIES])
+        enemy_hit_list: list[Enemy] = arcade.check_for_collision_with_list(self.player,
+                                                                           self.scene[constants.LAYER_NAME_ENEMIES])
 
         action_type = ActionType.MOVE if move_x == 0 or move_y == 0 else ActionType.MOVE_DIAGONAL
         if len(wall_hit_list) > 0:
@@ -150,11 +151,11 @@ class Game(arcade.Window):
             action_type = ActionType.ATTACK
             enemy_hit_list[0].health -= 1
 
-        action_time = self.player.calculate_action_time(constants.MOVEMENT_TIMES[action_type])
+        action_time = self.player.calculate_action_time(constants.ACTION_TIMES[action_type])
         if action_time > 0:
             self.timer.advance_time(action_time)
-            if self.timer.total_ticks % 60 == 0:
-                self.add_enemy_to_scene()
+            # if self.timer.total_ticks % 60 == 0:
+            #     self.add_enemy_to_scene()
 
             for enemy in self.scene[constants.LAYER_NAME_ENEMIES]:
                 if enemy.health <= 0:
