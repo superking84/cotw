@@ -81,8 +81,7 @@ class Game(arcade.Window):
     def get_random_placement_location(self):
         map_width = self.tile_map.tiled_map.map_size.width
         map_height = self.tile_map.tiled_map.map_size.height
-        # tile_size = self.tile_map.tiled_map.tile_size.width  # we ensure width and height are equal
-
+        
         x = (random.randint(0, map_width) * constants.SCALED_SPRITE_PIXEL_SIZE) + (16 * constants.TILE_SCALING)
         y = (random.randint(0, map_height) * constants.SCALED_SPRITE_PIXEL_SIZE) - (16 * constants.TILE_SCALING)
 
