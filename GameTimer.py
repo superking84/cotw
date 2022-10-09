@@ -46,9 +46,6 @@ class GameTimer:
         """
         elapsed_time = elapsed_time or DEFAULT_TIME_STEP
 
-        # if action_type is not None:
-        #     pass
-
         self.total_ticks += 1
         self.total_game_time += elapsed_time
         self.update_game_time(elapsed_time)
