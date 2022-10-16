@@ -1,25 +1,11 @@
-from enum import Enum
-
-
-class WearLocation(Enum):
-    TORSO = 1
-    NECK = 2
-    BACK = 3
-    HEAD = 4
-    SHIELD = 5
-    LEGS = 6
-    HANDS = 7
-    RIGHT_HAND = 8
-    LEFT_HAND = 9
-    RIGHT_RING = 10
-    LEFT_RING = 10
-    WAIST = 11
-    FEET = 12
-    BACKPACK = 13
-    PURSE = 14
+from WearLocation import WearLocation
 
 
 class Item:
+    """
+    Any in-game object that the player may carry and interact with in some way.
+    """
+
     def __init__(self):
         self.weight = 0
         self.size = 0
@@ -29,8 +15,9 @@ class Item:
 
 class Equipment(Item):
     """
-    Any wearable item that provides a boost in stats to the player.
+    Any item that the player may wear. Optionally alters the player's stats.
     """
+
     def __init__(self):
         super(Equipment, self).__init__()
 
@@ -43,6 +30,7 @@ class Consumable(Item):
     more times.  May either disappear or convert into a "dead"
     version of the item upon depletion.
     """
+
     def __init__(self):
         super(Consumable, self).__init__()
 
@@ -55,6 +43,7 @@ class Container(Item):
     Items such as backpacks and chests that may contain other items.
     May or may not be wearable.
     """
+
     def __init__(self):
         super(Container, self).__init__()
 
