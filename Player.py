@@ -2,6 +2,7 @@ import arcade
 
 import constants
 from Character import Character
+from Item import WearLocation
 
 
 class Player(Character):
@@ -12,6 +13,15 @@ class Player(Character):
         self.first_move_complete = False
         self.move_wait_elapsed = 0
         self.move_delay = constants.FIRST_MOVE_DELAY_SECONDS
+
+        self.equipment = dict()
+
+    def setup(self, strength: int, dexterity: int, intelligence: int,
+              constitution: int, health: int, mana: int):
+        super(Player, self).setup(strength, dexterity, intelligence, constitution)
+
+        for wearable_location in WearLocation:
+            self.equipment[wearable_location] = None
 
     def on_key_press(self, key: arcade.key):
         if key in constants.MOVEMENT_KEYS:
@@ -26,9 +36,10 @@ class Player(Character):
             self.move_wait_elapsed = 0
             self.is_moving = False
 
-    def get_movement_direction(self, keys_pressed: list):
+    @staticmethod
+    def get_movement_direction(keys_pressed: list):
         """
-        :return: A 2-tuple (x, y) which represents the type of movement resulting
+        :return: A 2-tuple (x, y) which represents the direction of movement resulting
         from the keypress.
         """
         last_key = keys_pressed[-1]
