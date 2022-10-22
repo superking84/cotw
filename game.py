@@ -1,12 +1,14 @@
 import random
 
 import arcade
+from arcade.gui import UIManager
 
 import constants
 from game_objects.ActionTypes import ActionType
 from game_objects.Enemy import Enemy
 from game_objects.GameTimer import GameTimer
 from game_objects.Player import Player
+from ui.DraggableTile import DraggableTile
 
 enemy_img_src = "resources/images/zombie_idle.png"
 
@@ -30,6 +32,9 @@ class Game(arcade.Window):
         self.keys_pressed = []
 
         self.timer = GameTimer()
+
+        self.ui_manager = None
+        self.tile = None
 
     def setup(self):
         self.camera = arcade.Camera(self.width, self.height)
@@ -63,6 +68,12 @@ class Game(arcade.Window):
         self.add_enemy_to_scene()
         self.add_enemy_to_scene()
         self.center_camera_to_player()
+
+        self.ui_manager = UIManager()
+        self.ui_manager.enable()
+        test_sprite = arcade.sprite.Sprite(enemy_img_src)
+        self.tile = DraggableTile(sprite=test_sprite)
+        self.ui_manager.add(self.tile)
 
     def add_enemy_to_scene(self):
         enemy_location = self.get_random_placement_location()
@@ -110,6 +121,8 @@ class Game(arcade.Window):
             arcade.csscolor.BLACK,
             18
         )
+
+        self.ui_manager.draw()
 
     def on_key_press(self, key: int, modifiers: int):
         if key not in self.keys_pressed:
