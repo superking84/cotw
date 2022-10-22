@@ -1,8 +1,8 @@
 import arcade
 
 import constants
-from ActionTypes import ActionType
-from Character import Character
+from game_objects.ActionTypes import ActionType
+from game_objects.Character import Character
 
 
 class Enemy(Character):
@@ -37,8 +37,8 @@ class Enemy(Character):
         self_x = self.center_x
         self_y = self.center_y
 
-        return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and \
-               abs(self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
+        return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and abs(
+            self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
 
     def select_next_action(self):
         if not self.target:

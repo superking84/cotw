@@ -1,4 +1,6 @@
-from Enemy import Enemy
+from typing import Optional
+
+from game_objects.Enemy import Enemy
 
 DEFAULT_TIME_STEP = 5
 
@@ -38,7 +40,7 @@ class GameTimer:
 
             self.listeners.pop(listener_index)
 
-    def advance_time(self, elapsed_time: int):
+    def advance_time(self, elapsed_time: Optional[int]):
         """
         Increase the elapsed in-game time by the specified number of seconds.
         :param elapsed_time: An amount of time in seconds.
@@ -56,7 +58,7 @@ class GameTimer:
 
     def tick(self):
         """
-        Advance the game by one tick. Ticks are distinct from game time, as
+        Advance the game by one tick. Ticks are distinct from game time.
         :return:
         """
         if self.player_has_control:

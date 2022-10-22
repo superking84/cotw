@@ -3,12 +3,12 @@ import random
 import arcade
 
 import constants
-from ActionTypes import ActionType
-from Enemy import Enemy
-from GameTimer import GameTimer
-from Player import Player
+from game_objects.ActionTypes import ActionType
+from game_objects.Enemy import Enemy
+from game_objects.GameTimer import GameTimer
+from game_objects.Player import Player
 
-enemy_img_src = "images/zombie_idle.png"
+enemy_img_src = "resources/images/zombie_idle.png"
 
 
 class Game(arcade.Window):
@@ -35,20 +35,23 @@ class Game(arcade.Window):
         self.camera = arcade.Camera(self.width, self.height)
         self.gui_camera = arcade.Camera(self.width, self.height)
 
-        map_name = f"map1.json"
+        map_name = f"./resources/map1.json"
 
         self.tile_map = arcade.load_tilemap(map_name, constants.TILE_SCALING, layer_options=None)
 
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite_list_after(constants.LAYER_NAME_PLAYER, constants.LAYER_NAME_WALLS)
         self.scene.add_sprite_list_after(constants.LAYER_NAME_ENEMIES, constants.LAYER_NAME_PLAYER)
-        image_source = "images/femaleAdventurer_idle.png"
+        image_source = "./resources/images/femaleAdventurer_idle.png"
         self.player = Player(image_source, constants.PLAYER_START_X, constants.PLAYER_START_Y)
         self.player.setup(
             strength=10,
             dexterity=10,
             intelligence=10,
-            constitution=10)
+            constitution=10,
+            health=50,
+            mana=25
+        )
 
         self.scene.add_sprite(constants.LAYER_NAME_PLAYER, self.player)
 
@@ -81,7 +84,7 @@ class Game(arcade.Window):
     def get_random_placement_location(self):
         map_width = self.tile_map.tiled_map.map_size.width
         map_height = self.tile_map.tiled_map.map_size.height
-        
+
         x = (random.randint(0, map_width) * constants.SCALED_SPRITE_PIXEL_SIZE) + (16 * constants.TILE_SCALING)
         y = (random.randint(0, map_height) * constants.SCALED_SPRITE_PIXEL_SIZE) - (16 * constants.TILE_SCALING)
 
@@ -99,7 +102,7 @@ class Game(arcade.Window):
 
         self.gui_camera.use()
         score_text = f"Game time: {self.timer.get_game_time()}"
-        # score_text = f"Player Health: {self.player.health}.  Enemy Health: {self.enemy.health}"
+
         arcade.draw_text(
             score_text,
             10,
