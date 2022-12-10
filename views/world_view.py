@@ -32,60 +32,6 @@ class WorldView(arcade.View):
         self.ui_manager = None
         self.tile = None
 
-    def on_draw(self):
-        """Render the screen."""
-
-        # Clear the screen to the background color
-        self.clear()
-
-        # Draw our scene
-        self.camera.use()
-        self.scene.draw()
-
-        self.gui_camera.use()
-        score_text = f"Game time: {self.timer.get_game_time()}"
-
-        arcade.draw_text(
-            score_text,
-            10,
-            10,
-            arcade.csscolor.BLACK,
-            18
-        )
-
-        self.ui_manager.draw()
-
-    def on_key_press(self, key: int, modifiers: int):
-        if key not in self.keys_pressed:
-            self.keys_pressed.append(key)
-
-            self.player.on_key_press(key)
-            if key in constants.MOVEMENT_KEYS:
-                self.process_movement()
-                self.center_camera_to_player()
-
-            match key:
-                case arcade.key.ESCAPE:
-                    arcade.exit()
-
-    def on_key_release(self, key: int, modifiers: int):
-        if key in self.keys_pressed:
-            self.keys_pressed.remove(key)
-
-            self.player.on_key_release(self.keys_pressed)
-
-    def on_update(self, delta_time: float):
-        if self.player.is_moving and (self.player.move_wait_elapsed >= self.player.move_delay):
-            if self.player.move_wait_elapsed >= self.player.move_delay:
-                self.player.move_delay = constants.MOVE_DELAY_SECONDS
-
-            self.player.move_wait_elapsed = 0
-            self.process_movement()
-            self.center_camera_to_player()
-
-        if self.player.is_moving:
-            self.player.move_wait_elapsed += delta_time
-
     def setup(self):
         self.camera = arcade.Camera(self.window.width, self.window.height)
 
@@ -125,6 +71,62 @@ class WorldView(arcade.View):
         test_sprite = arcade.sprite.Sprite(enemy_img_src)
         self.tile = DraggableTile(sprite=test_sprite)
         self.ui_manager.add(self.tile)
+
+    def on_draw(self):
+        """Render the screen."""
+
+        # Clear the screen to the background color
+        self.clear()
+
+        # Draw our scene
+        self.camera.use()
+        self.scene.draw()
+
+        self.gui_camera.use()
+        score_text = f"Game time: {self.timer.get_game_time()}"
+
+        arcade.draw_text(
+            score_text,
+            10,
+            10,
+            arcade.csscolor.BLACK,
+            18
+        )
+
+        self.ui_manager.draw()
+
+    def on_key_press(self, key: int, modifiers: int):
+        if key not in self.keys_pressed:
+            self.keys_pressed.append(key)
+
+            self.player.on_key_press(key)
+            if key in constants.MOVEMENT_KEYS:
+                self.process_movement()
+                self.center_camera_to_player()
+
+            match key:
+                case arcade.key.ESCAPE:
+                    arcade.exit()
+                case arcade.key.I:
+                    self.window.show_view(self.window.views["inventory"])
+
+    def on_key_release(self, key: int, modifiers: int):
+        if key in self.keys_pressed:
+            self.keys_pressed.remove(key)
+
+            self.player.on_key_release(self.keys_pressed)
+
+    def on_update(self, delta_time: float):
+        if self.player.is_moving and (self.player.move_wait_elapsed >= self.player.move_delay):
+            if self.player.move_wait_elapsed >= self.player.move_delay:
+                self.player.move_delay = constants.MOVE_DELAY_SECONDS
+
+            self.player.move_wait_elapsed = 0
+            self.process_movement()
+            self.center_camera_to_player()
+
+        if self.player.is_moving:
+            self.player.move_wait_elapsed += delta_time
 
     def add_enemy_to_scene(self):
         enemy_location = self.get_random_placement_location()
