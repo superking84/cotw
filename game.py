@@ -4,11 +4,11 @@ import arcade
 from arcade.gui import UIManager
 
 import constants
-from game_objects.ActionTypes import ActionType
-from game_objects.Enemy import Enemy
-from game_objects.GameTimer import GameTimer
-from game_objects.Player import Player
-from ui.DraggableTile import DraggableTile
+from game_objects.action_type import ActionType
+from game_objects.enemy import Enemy
+from game_objects.game_timer import GameTimer
+from game_objects.player import Player
+from ui.draggable_tile import DraggableTile
 
 enemy_img_src = "resources/images/zombie_idle.png"
 
@@ -38,6 +38,7 @@ class Game(arcade.Window):
 
     def setup(self):
         self.camera = arcade.Camera(self.width, self.height)
+
         self.gui_camera = arcade.Camera(self.width, self.height)
 
         map_name = f"./resources/map1.json"

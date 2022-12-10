@@ -1,4 +1,4 @@
-from game_objects.WearLocation import WearLocation
+from game_objects.wear_location import WearLocation
 
 
 class Item:

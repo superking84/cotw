@@ -1,8 +1,8 @@
 import arcade
 
 import constants
-from game_objects.Character import Character
-from game_objects.Item import WearLocation
+from game_objects.character import Character
+from game_objects.item import WearLocation
 
 
 class Player(Character):

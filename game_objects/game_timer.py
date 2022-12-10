@@ -1,6 +1,6 @@
 from typing import Optional
 
-from game_objects.Enemy import Enemy
+from game_objects.enemy import Enemy
 
 DEFAULT_TIME_STEP = 5
 

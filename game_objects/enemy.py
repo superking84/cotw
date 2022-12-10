@@ -1,8 +1,8 @@
 import arcade
 
 import constants
-from game_objects.ActionTypes import ActionType
-from game_objects.Character import Character
+from game_objects.action_type import ActionType
+from game_objects.character import Character
 
 
 class Enemy(Character):
