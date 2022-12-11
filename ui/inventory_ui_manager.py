@@ -12,6 +12,6 @@ class InventoryUIManager(arcade.gui.UIManager):
             mouse_event: arcade.gui.UIMouseReleaseEvent = event
             for widget in self.get_widgets_at(mouse_event.pos):
                 if isinstance(widget, InventorySlotWidget):
-                    print("Inventory slot widget")
+                    print(widget.name)
 
         return super().on_event(event)
