@@ -1,14 +1,12 @@
 import random
 
 import arcade
-from arcade.gui import UIManager
 
 import constants
 from game_objects.action_type import ActionType
 from game_objects.enemy import Enemy
 from game_objects.game_timer import GameTimer
 from game_objects.player import Player
-from ui.draggable_tile import DraggableTile
 
 enemy_img_src = "resources/images/zombie_idle.png"
 
@@ -28,9 +26,6 @@ class WorldView(arcade.View):
         self.keys_pressed = []
 
         self.timer = GameTimer()
-
-        self.ui_manager = None
-        self.tile = None
 
     def setup(self):
         self.camera = arcade.Camera(self.window.width, self.window.height)
@@ -66,12 +61,6 @@ class WorldView(arcade.View):
         self.add_enemy_to_scene()
         self.center_camera_to_player()
 
-        self.ui_manager = UIManager()
-        self.ui_manager.enable()
-        test_sprite = arcade.sprite.Sprite(enemy_img_src)
-        self.tile = DraggableTile(sprite=test_sprite)
-        self.ui_manager.add(self.tile)
-
     def on_draw(self):
         """Render the screen."""
 
@@ -93,8 +82,6 @@ class WorldView(arcade.View):
             18
         )
 
-        self.ui_manager.draw()
-
     def on_key_press(self, key: int, modifiers: int):
         if key not in self.keys_pressed:
             self.keys_pressed.append(key)
@@ -115,6 +102,9 @@ class WorldView(arcade.View):
             self.keys_pressed.remove(key)
 
             self.player.on_key_release(self.keys_pressed)
+
+    def on_hide_view(self):
+        self.keys_pressed = []
 
     def on_update(self, delta_time: float):
         if self.player.is_moving and (self.player.move_wait_elapsed >= self.player.move_delay):
@@ -177,8 +167,8 @@ class WorldView(arcade.View):
         wall_hit_list = arcade.check_for_collision_with_lists(self.player,
                                                               [self.scene[constants.LAYER_NAME_FOREGROUND],
                                                                self.scene[constants.LAYER_NAME_WALLS]])
-        enemy_hit_list: list[Enemy] = arcade.check_for_collision_with_list(self.player,
-                                                                           self.scene[constants.LAYER_NAME_ENEMIES])
+        enemy_hit_list = arcade.check_for_collision_with_list(self.player,
+                                                              self.scene[constants.LAYER_NAME_ENEMIES])
 
         action_type = ActionType.MOVE if move_x == 0 or move_y == 0 else ActionType.MOVE_DIAGONAL
         if len(wall_hit_list) > 0:
@@ -191,8 +181,6 @@ class WorldView(arcade.View):
         action_time = self.player.calculate_action_time(constants.ACTION_TIMES[action_type])
         if action_time > 0:
             self.timer.advance_time(action_time)
-            # if self.timer.total_ticks % 60 == 0:
-            #     self.add_enemy_to_scene()
 
             for enemy in self.scene[constants.LAYER_NAME_ENEMIES]:
                 if enemy.health <= 0:
