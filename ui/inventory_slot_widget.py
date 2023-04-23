@@ -1,4 +1,8 @@
+from typing import Optional
+
 from arcade.gui import UIWidget
+
+from game_objects.item import Item
 
 
 class InventorySlotWidget(UIWidget):
@@ -6,4 +10,4 @@ class InventorySlotWidget(UIWidget):
         super().__init__(x, y, width, height)
 
         self.name = name
-        self.item = None  # the item being held in the inventory slot
+        self.item: Optional[Item] = None  # the item being held in the inventory slot
