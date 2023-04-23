@@ -1,11 +1,11 @@
 import arcade
 
 import constants
-from game_objects.character import NewCharacter
-from game_objects.item import WearLocation
+from game_objects.character import Character
+from game_objects.wear_location import WearLocation
 
 
-class Player(NewCharacter):
+class Player(Character):
     def __init__(self, img_src: str, center_x: int, center_y: int):
         super().__init__(img_src, center_x, center_y)
 
