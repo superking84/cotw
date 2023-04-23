@@ -2,10 +2,10 @@ import arcade
 
 import constants
 from game_objects.action_type import ActionType
-from game_objects.character import Character, NewCharacter
+from game_objects.character import Character
 
 
-class Enemy(NewCharacter):
+class Enemy(Character):
     def __init__(self, img_src: str, center_x: int, center_y: int):
         super(Enemy, self).__init__(img_src, center_x, center_y)
 
