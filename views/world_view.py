@@ -176,7 +176,10 @@ class WorldView(arcade.View):
         elif len(enemy_hit_list) > 0:
             self.player.set_position(previous_location[0], previous_location[1])
             action_type = ActionType.ATTACK
-            enemy_hit_list[0].health -= 1
+            
+            # noinspection PyTypeChecker
+            enemy: Enemy = enemy_hit_list[0]
+            enemy.health -= 1
 
         action_time = self.player.calculate_action_time(constants.ACTION_TIMES[action_type])
         if action_time > 0:
