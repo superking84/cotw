@@ -1,12 +1,14 @@
+from typing import Dict
+
 import arcade
 from arcade.gui import UILabel
 
 import constants
-from game_objects.consumable import Consumable
+from game_objects.item import Item
 from ui.inventory_slot_widget import InventorySlotWidget
 from ui.inventory_ui_manager import InventoryUIManager
 
-enemy_img_src = "resources/images/zombie_idle.png"
+coin_img_src = "resources/images/coinGold.png"
 
 INVENTORY_SLOT_BORDER = 2
 INVENTORY_SLOT_HEIGHT = (constants.SCREEN_HEIGHT / 6) - (INVENTORY_SLOT_BORDER * 2)
@@ -36,7 +38,7 @@ class InventoryView(arcade.View):
         super().__init__()
 
         self.manager = InventoryUIManager()
-        self.inventory = {}
+        self.inventory: Dict[str, InventorySlotWidget] = {}
 
         for slot_data in inventory_slot_data:
             x = slot_data["column"] * INVENTORY_SLOT_WIDTH
@@ -49,7 +51,16 @@ class InventoryView(arcade.View):
             slot.add(label)
             self.manager.add(slot)
 
+            self.inventory[slot_data["name"]] = slot
+
     def setup(self):
+        slot = self.inventory["Free Hand"]
+        test_item = Item(coin_img_src, slot.center_x, slot.center_y)
+        slot.item = test_item
+        test_item.sprite.center_x = slot.center_x
+        test_item.sprite.center_y = slot.center_y
+        self.manager.add(test_item.tile)
+
         pass
 
     def on_show_view(self):
