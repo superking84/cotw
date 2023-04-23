@@ -3,7 +3,7 @@ import arcade
 import constants
 
 
-class Character(arcade.Sprite):
+class Character:
     """
     The base class for all characters in the game.
     Base functionality is inherited by Player, Enemy
@@ -11,8 +11,7 @@ class Character(arcade.Sprite):
     """
 
     def __init__(self, img_src: str, center_x: int, center_y: int):
-        super(Character, self).__init__(img_src, constants.CHARACTER_SCALING, center_x=center_x, center_y=center_y)
-
+        self.sprite = arcade.Sprite(img_src, constants.CHARACTER_SCALING, center_x=center_x, center_y=center_y)
         self.level = 1
 
         # base stats

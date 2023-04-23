@@ -2,10 +2,10 @@ import arcade
 
 import constants
 from game_objects.action_type import ActionType
-from game_objects.character import Character
+from game_objects.character import Character, NewCharacter
 
 
-class Enemy(Character):
+class Enemy(NewCharacter):
     def __init__(self, img_src: str, center_x: int, center_y: int):
         super(Enemy, self).__init__(img_src, center_x, center_y)
 
@@ -18,8 +18,8 @@ class Enemy(Character):
 
     def setup(self, strength: int, dexterity: int, intelligence: int,
               constitution: int, health: int, mana: int, scene: arcade.Scene, target: Character):
-        super(Enemy, self).setup(strength, dexterity, intelligence,
-                                 constitution)
+        super().setup(strength, dexterity, intelligence,
+                      constitution)
 
         self.scene = scene
         self.health = health
@@ -31,11 +31,11 @@ class Enemy(Character):
         self.speed = 0.5
 
     def is_next_to_target(self):
-        target_x = self.target.center_x
-        target_y = self.target.center_y
+        target_x = self.target.sprite.center_x
+        target_y = self.target.sprite.center_y
 
-        self_x = self.center_x
-        self_y = self.center_y
+        self_x = self.sprite.center_x
+        self_y = self.sprite.center_y
 
         return abs(self_x - target_x) <= constants.PLAYER_MOVEMENT_SPEED and abs(
             self_y - target_y) <= constants.PLAYER_MOVEMENT_SPEED
@@ -47,17 +47,17 @@ class Enemy(Character):
         if self.is_next_to_target():
             self.next_action = ActionType.ATTACK
         else:
-            target_x = self.target.center_x
-            target_y = self.target.center_y
+            target_x = self.target.sprite.center_x
+            target_y = self.target.sprite.center_y
 
             move_x = constants.PLAYER_MOVEMENT_SPEED \
-                if target_x > self.center_x \
+                if target_x > self.sprite.center_x \
                 else -constants.PLAYER_MOVEMENT_SPEED \
-                if target_x < self.center_x else 0
+                if target_x < self.sprite.center_x else 0
             move_y = constants.PLAYER_MOVEMENT_SPEED \
-                if target_y > self.center_y \
+                if target_y > self.sprite.center_y \
                 else -constants.PLAYER_MOVEMENT_SPEED \
-                if target_y < self.center_y else 0
+                if target_y < self.sprite.center_y else 0
 
             if move_x == 0 or move_y == 0:
                 self.next_action = ActionType.MOVE
@@ -102,19 +102,19 @@ class Enemy(Character):
 
     def move(self):
         # TODO: Address issue with movement between tiles, as enemy currently seems to get out of alignment
-        start_x = self.center_x
-        start_y = self.center_y
+        start_x = self.sprite.center_x
+        start_y = self.sprite.center_y
 
-        self.center_x += self.destination[0]
-        self.center_y += self.destination[1]
+        self.sprite.center_x += self.destination[0]
+        self.sprite.center_y += self.destination[1]
 
-        did_collide_with_target = arcade.check_for_collision(self, self.target)
-        wall_hit_list = arcade.check_for_collision_with_lists(self, [self.scene[constants.LAYER_NAME_FOREGROUND],
-                                                                     self.scene[constants.LAYER_NAME_WALLS]])
-        enemy_hit_list = arcade.check_for_collision_with_list(self, self.scene[constants.LAYER_NAME_ENEMIES])
+        did_collide_with_target = arcade.check_for_collision(self.sprite, self.target.sprite)
+        wall_hit_list = arcade.check_for_collision_with_lists(self.sprite, [self.scene[constants.LAYER_NAME_FOREGROUND],
+                                                                            self.scene[constants.LAYER_NAME_WALLS]])
+        enemy_hit_list = arcade.check_for_collision_with_list(self.sprite, self.scene[constants.LAYER_NAME_ENEMIES])
 
         if did_collide_with_target or len(wall_hit_list) > 0 or len(enemy_hit_list) > 0:
-            self.center_x = start_x
-            self.center_y = start_y
+            self.sprite.center_x = start_x
+            self.sprite.center_y = start_y
             # if did_collide_with_target:
             #     self.select_next_action()

@@ -1,4 +1,5 @@
 import random
+from typing import Dict
 
 import arcade
 
@@ -22,6 +23,7 @@ class WorldView(arcade.View):
 
         self.player = None
         self.enemy = None
+        self.enemies_by_sprite: Dict[arcade.Sprite, Enemy] = {}
 
         self.keys_pressed = []
 
@@ -50,7 +52,7 @@ class WorldView(arcade.View):
             mana=25
         )
 
-        self.scene.add_sprite(constants.LAYER_NAME_PLAYER, self.player)
+        self.scene.add_sprite(constants.LAYER_NAME_PLAYER, self.player.sprite)
 
         if self.tile_map.background_color:
             arcade.set_background_color(self.tile_map.background_color)
@@ -132,7 +134,8 @@ class WorldView(arcade.View):
             target=self.player
         )
 
-        self.scene.add_sprite(constants.LAYER_NAME_ENEMIES, enemy)
+        self.enemies_by_sprite[enemy.sprite] = enemy
+        self.scene.add_sprite(constants.LAYER_NAME_ENEMIES, enemy.sprite)
         self.timer.register_listener(enemy)
 
     def get_random_placement_location(self):
@@ -145,8 +148,8 @@ class WorldView(arcade.View):
         return x, y
 
     def center_camera_to_player(self):
-        screen_center_x = self.player.center_x - (self.camera.viewport_width / 2)
-        screen_center_y = self.player.center_y - (self.camera.viewport_height / 2)
+        screen_center_x = self.player.sprite.center_x - (self.camera.viewport_width / 2)
+        screen_center_y = self.player.sprite.center_y - (self.camera.viewport_height / 2)
 
         screen_center_x = max(screen_center_x, 0)
         screen_center_y = max(screen_center_y, 0)
@@ -158,34 +161,42 @@ class WorldView(arcade.View):
     def process_movement(self):
         (move_x, move_y) = self.player.get_movement_direction(self.keys_pressed)
 
-        previous_location = [self.player.center_x, self.player.center_y]
-        self.player.set_position(
-            self.player.center_x + (move_x * constants.PLAYER_MOVEMENT_SPEED),
-            self.player.center_y + (move_y * constants.PLAYER_MOVEMENT_SPEED)
+        previous_location = [self.player.sprite.center_x, self.player.sprite.center_y]
+        self.player.sprite.set_position(
+            self.player.sprite.center_x + (move_x * constants.PLAYER_MOVEMENT_SPEED),
+            self.player.sprite.center_y + (move_y * constants.PLAYER_MOVEMENT_SPEED)
         )
 
-        wall_hit_list = arcade.check_for_collision_with_lists(self.player,
+        wall_hit_list = arcade.check_for_collision_with_lists(self.player.sprite,
                                                               [self.scene[constants.LAYER_NAME_FOREGROUND],
                                                                self.scene[constants.LAYER_NAME_WALLS]])
-        enemy_hit_list = arcade.check_for_collision_with_list(self.player,
+        enemy_hit_list = arcade.check_for_collision_with_list(self.player.sprite,
                                                               self.scene[constants.LAYER_NAME_ENEMIES])
 
         action_type = ActionType.MOVE if move_x == 0 or move_y == 0 else ActionType.MOVE_DIAGONAL
         if len(wall_hit_list) > 0:
-            self.player.set_position(previous_location[0], previous_location[1])
+            self.player.sprite.set_position(previous_location[0], previous_location[1])
         elif len(enemy_hit_list) > 0:
-            self.player.set_position(previous_location[0], previous_location[1])
+            self.player.sprite.set_position(previous_location[0], previous_location[1])
             action_type = ActionType.ATTACK
-            
+
             # noinspection PyTypeChecker
-            enemy: Enemy = enemy_hit_list[0]
+            enemy: Enemy = self.enemies_by_sprite[enemy_hit_list[0]]
             enemy.health -= 1
 
         action_time = self.player.calculate_action_time(constants.ACTION_TIMES[action_type])
         if action_time > 0:
             self.timer.advance_time(action_time)
 
-            for enemy in self.scene[constants.LAYER_NAME_ENEMIES]:
+            to_kill = []
+            for enemy in self.enemies_by_sprite.values():
                 if enemy.health <= 0:
-                    self.timer.unregister_listener(enemy)
-                    enemy.kill()
+                    to_kill.append(enemy)
+
+            for enemy in to_kill:
+                self.kill_enemy(enemy)
+
+    def kill_enemy(self, enemy: Enemy):
+        self.timer.unregister_listener(enemy)
+        self.enemies_by_sprite.pop(enemy.sprite)
+        self.scene[constants.LAYER_NAME_ENEMIES].remove(enemy.sprite)
