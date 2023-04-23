@@ -59,7 +59,7 @@ class InventoryView(arcade.View):
         slot.item = test_item
         test_item.sprite.center_x = slot.center_x
         test_item.sprite.center_y = slot.center_y
-        self.manager.add(test_item.tile)
+        self.manager.add(test_item.inventory_tile)
 
         pass
 
