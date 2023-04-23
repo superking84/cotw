@@ -2,6 +2,7 @@ import arcade
 from arcade.gui import UILabel
 
 import constants
+from game_objects.consumable import Consumable
 from ui.inventory_slot_widget import InventorySlotWidget
 from ui.inventory_ui_manager import InventoryUIManager
 
@@ -35,6 +36,7 @@ class InventoryView(arcade.View):
         super().__init__()
 
         self.manager = InventoryUIManager()
+        self.inventory = {}
 
         for slot_data in inventory_slot_data:
             x = slot_data["column"] * INVENTORY_SLOT_WIDTH
