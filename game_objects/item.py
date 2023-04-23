@@ -1,12 +1,16 @@
+import arcade
+
+import constants
 from game_objects.wear_location import WearLocation
 
 
-class Item:
+class Item(arcade.Sprite):
     """
     Any in-game object that the player may carry and interact with in some way.
     """
 
-    def __init__(self):
+    def __init__(self, img_src: str, center_x: int, center_y: int):
+        super().__init__(img_src, constants.CHARACTER_SCALING, center_x=center_x, center_y=center_y)
         self.weight = 0
         self.size = 0
 
@@ -18,8 +22,8 @@ class Equipment(Item):
     Any item that the player may wear. Optionally alters the player's stats.
     """
 
-    def __init__(self):
-        super(Equipment, self).__init__()
+    def __init__(self, img_src: str, center_x: int, center_y: int):
+        super().__init__(img_src, center_x=center_x, center_y=center_y)
 
         self.wear_location = None
 
@@ -31,8 +35,8 @@ class Consumable(Item):
     version of the item upon depletion.
     """
 
-    def __init__(self):
-        super(Consumable, self).__init__()
+    def __init__(self, img_src: str, center_x: int, center_y: int):
+        super().__init__(img_src, center_x=center_x, center_y=center_y)
 
         self.num_uses = 0
         self.wearable_locations = [WearLocation.RIGHT_HAND, WearLocation.LEFT_HAND]
@@ -44,7 +48,7 @@ class Container(Item):
     May or may not be wearable.
     """
 
-    def __init__(self):
-        super(Container, self).__init__()
+    def __init__(self, img_src: str, center_x: int, center_y: int):
+        super().__init__(img_src, center_x=center_x, center_y=center_y)
 
         self.size_capacity = 0
