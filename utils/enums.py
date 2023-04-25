@@ -8,18 +8,18 @@ class ActionType(Enum):
 
 
 class WearLocation(Enum):
-    TORSO = 1
-    NECK = 2
-    BACK = 3
-    HEAD = 4
+    ARMOR = 1
+    NECKWEAR = 2
+    CLOAK = 3
+    HELMET = 4
     SHIELD = 5
-    LEGS = 6
-    HANDS = 7
+    BRACERS = 6
+    GAUNTLETS = 7
     RIGHT_HAND = 8
     LEFT_HAND = 9
     RIGHT_RING = 10
     LEFT_RING = 10
-    WAIST = 11
-    FEET = 12
+    BELT = 11
+    BOOTS = 12
     BACKPACK = 13
     PURSE = 14

@@ -4,9 +4,9 @@ import arcade
 from arcade.gui import UILabel
 
 import constants
-from game_objects.item import Item
 from ui.inventory_slot_widget import InventorySlotWidget
 from ui.inventory_ui_manager import InventoryUIManager
+from utils.enums import WearLocation
 
 coin_img_src = "resources/images/coinGold.png"
 
@@ -15,21 +15,21 @@ INVENTORY_SLOT_HEIGHT = (constants.SCREEN_HEIGHT / 6) - (INVENTORY_SLOT_BORDER *
 INVENTORY_SLOT_WIDTH = (INVENTORY_SLOT_HEIGHT * (4 / 5.0)) - (INVENTORY_SLOT_BORDER * 2)
 
 inventory_slot_data = [
-    {"name": "Armor", "row": 5, "column": 0},
-    {"name": "Neckwear", "row": 5, "column": 1},
-    {"name": "Overgarment", "row": 5, "column": 2},
-    {"name": "Helmet", "row": 5, "column": 3},
-    {"name": "Shield", "row": 5, "column": 4},
-    {"name": "Bracers", "row": 4, "column": 0},
-    {"name": "Gauntlets", "row": 4, "column": 4},
-    {"name": "Weapon Hand", "row": 3, "column": 0},
-    {"name": "Free Hand", "row": 3, "column": 4},
-    {"name": "Right Ring", "row": 2, "column": 0},
-    {"name": "Left Ring", "row": 2, "column": 4},
-    {"name": "Belt", "row": 1, "column": 0},
-    {"name": "Boots", "row": 1, "column": 4},
-    {"name": "Backpack", "row": 0, "column": 0},
-    {"name": "Purse", "row": 0, "column": 4}
+    {"wear_location": WearLocation.ARMOR, "name": "Armor", "row": 5, "column": 0},
+    {"wear_location": WearLocation.NECKWEAR, "name": "Neckwear", "row": 5, "column": 1},
+    {"wear_location": WearLocation.CLOAK, "name": "Overgarment", "row": 5, "column": 2},
+    {"wear_location": WearLocation.HELMET, "name": "Helmet", "row": 5, "column": 3},
+    {"wear_location": WearLocation.SHIELD, "name": "Shield", "row": 5, "column": 4},
+    {"wear_location": WearLocation.BRACERS, "name": "Bracers", "row": 4, "column": 0},
+    {"wear_location": WearLocation.GAUNTLETS, "name": "Gauntlets", "row": 4, "column": 4},
+    {"wear_location": WearLocation.RIGHT_HAND, "name": "right hand", "row": 3, "column": 0},
+    {"wear_location": WearLocation.LEFT_HAND, "name": "left hand", "row": 3, "column": 4},
+    {"wear_location": WearLocation.RIGHT_RING, "name": "Right Ring", "row": 2, "column": 0},
+    {"wear_location": WearLocation.LEFT_RING, "name": "Left Ring", "row": 2, "column": 4},
+    {"wear_location": WearLocation.BELT, "name": "Belt", "row": 1, "column": 0},
+    {"wear_location": WearLocation.BOOTS, "name": "Boots", "row": 1, "column": 4},
+    {"wear_location": WearLocation.BACKPACK, "name": "Backpack", "row": 0, "column": 0},
+    {"wear_location": WearLocation.PURSE, "name": "Purse", "row": 0, "column": 4}
 ]
 
 
