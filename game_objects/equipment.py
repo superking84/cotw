@@ -8,5 +8,3 @@ class Equipment(Item):
 
     def __init__(self, img_src: str, center_x: int, center_y: int):
         super().__init__(img_src, center_x, center_y)
-
-        self.wear_location = None

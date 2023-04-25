@@ -13,4 +13,4 @@ class Consumable(Item):
         super().__init__(img_src, center_x, center_y)
 
         self.num_uses = 0
-        self.wearable_locations = [WearLocation.RIGHT_HAND, WearLocation.LEFT_HAND]
+        self.valid_wear_locations = [WearLocation.RIGHT_HAND, WearLocation.LEFT_HAND]
