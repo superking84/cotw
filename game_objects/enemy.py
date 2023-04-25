@@ -1,8 +1,8 @@
 import arcade
 
 import constants
-from game_objects.action_type import ActionType
 from game_objects.character import Character
+from utils.enums import ActionType
 
 
 class Enemy(Character):

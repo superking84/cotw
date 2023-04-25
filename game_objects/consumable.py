@@ -1,5 +1,5 @@
 from game_objects.item import Item
-from game_objects.wear_location import WearLocation
+from utils.enums import WearLocation
 
 
 class Consumable(Item):

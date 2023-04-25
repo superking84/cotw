@@ -1,6 +1,6 @@
 import arcade
 
-from game_objects.action_type import ActionType
+from utils.enums import ActionType
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600

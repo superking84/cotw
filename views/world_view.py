@@ -4,10 +4,10 @@ from typing import Dict
 import arcade
 
 import constants
-from game_objects.action_type import ActionType
 from game_objects.enemy import Enemy
-from game_objects.game_timer import GameTimer
 from game_objects.player import Player
+from utils.enums import ActionType
+from utils.game_timer import GameTimer
 
 enemy_img_src = "resources/images/zombie_idle.png"
 

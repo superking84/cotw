@@ -2,7 +2,7 @@ import arcade
 
 import constants
 from game_objects.character import Character
-from game_objects.wear_location import WearLocation
+from utils.enums import WearLocation
 
 
 class Player(Character):
