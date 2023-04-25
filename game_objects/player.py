@@ -1,7 +1,10 @@
+from typing import Dict, Optional
+
 import arcade
 
 import constants
 from game_objects.character import Character
+from game_objects.item import Item
 from utils.enums import WearLocation
 
 
@@ -14,14 +17,13 @@ class Player(Character):
         self.move_wait_elapsed = 0
         self.move_delay = constants.FIRST_MOVE_DELAY_SECONDS
 
-        self.equipment = dict()
+        self.inventory: Dict[WearLocation, Optional[Item]] = {}
+        for wear_location in WearLocation:
+            self.inventory[wear_location] = None
 
     def setup(self, strength: int, dexterity: int, intelligence: int,
               constitution: int, health: int, mana: int):
         super().setup(strength, dexterity, intelligence, constitution)
-
-        for wearable_location in WearLocation:
-            self.equipment[wearable_location] = None
 
     def on_key_press(self, key: arcade.key):
         if key in constants.MOVEMENT_KEYS:
