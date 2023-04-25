@@ -1,6 +1,12 @@
 from enum import Enum
 
 
+class ActionType(Enum):
+    MOVE = 1
+    MOVE_DIAGONAL = 2
+    ATTACK = 3
+
+
 class WearLocation(Enum):
     TORSO = 1
     NECK = 2
