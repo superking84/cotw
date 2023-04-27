@@ -25,16 +25,6 @@ class Character:
         self.mana = 0
         self.speed = 1.00
 
-    def setup(self, strength: int, dexterity: int, intelligence: int,
-              constitution: int):
-        # base stats
-        self.strength = strength
-        self.dexterity = dexterity
-        self.intelligence = intelligence
-        self.constitution = constitution
-
-        # calculated stats
-
     def calculate_action_time(self, base_completion_time: float):
         """
         Determine the time the character will take to complete

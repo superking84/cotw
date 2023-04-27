@@ -18,9 +18,10 @@ class Enemy(Character):
 
     def setup(self, strength: int, dexterity: int, intelligence: int,
               constitution: int, health: int, mana: int, scene: arcade.Scene, target: Character):
-        super().setup(strength, dexterity, intelligence,
-                      constitution)
-
+        self.strength = strength
+        self.dexterity = dexterity
+        self.intelligence = intelligence
+        self.constitution = constitution
         self.scene = scene
         self.health = health
         self.mana = mana

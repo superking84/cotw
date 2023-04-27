@@ -23,7 +23,14 @@ class Player(Character):
 
     def setup(self, strength: int, dexterity: int, intelligence: int,
               constitution: int, health: int, mana: int):
-        super().setup(strength, dexterity, intelligence, constitution)
+        self.strength = strength
+        self.dexterity = dexterity
+        self.intelligence = intelligence
+        self.constitution = constitution
+        self.health = health
+        self.mana = mana
+
+        self.inventory[WearLocation.LEFT_HAND] = Item("Coin", "resources/images/coinGold.png", -1, -1)
 
     def on_key_press(self, key: arcade.key):
         if key in constants.MOVEMENT_KEYS:

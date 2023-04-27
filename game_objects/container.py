@@ -1,4 +1,7 @@
+from typing import List
+
 from game_objects.item import Item
+from utils.enums import WearLocation
 
 
 class Container(Item):
@@ -7,7 +10,9 @@ class Container(Item):
     May or may not be wearable.
     """
 
-    def __init__(self, img_src: str, center_x: int, center_y: int):
-        super().__init__(img_src, center_x, center_y)
+    def __init__(self, name: str, img_src: str, center_x: int, center_y: int, wear_locations: List[WearLocation]):
+        super().__init__(name, img_src, center_x, center_y)
 
         self.size_capacity = 0
+        if wear_locations is not None:
+            self.valid_wear_locations = wear_locations
