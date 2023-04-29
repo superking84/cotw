@@ -1,2 +1,2 @@
 arcade==2.6.17
-pyglet~=2.0.5
+pyglet==2.0.dev23 # issue with latest version working well with Python Arcade
