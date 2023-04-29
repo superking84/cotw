@@ -1,14 +1,18 @@
+from typing import Optional
+
 import arcade.gui
 
+from game_objects.player import Player
 from ui.inventory_slot_widget import InventorySlotWidget
 from ui.inventory_view_tile import InventoryViewTile
 
 
 class InventoryUIManager(arcade.gui.UIManager):
-    def __init__(self):
+    def __init__(self, player: Player):
         super().__init__()
 
-        self.dragged_tile: InventoryViewTile = None
+        self.player = player
+        self.dragged_tile: Optional[InventoryViewTile] = None
 
     def on_event(self, event) -> bool:
         if isinstance(event, arcade.gui.UIMousePressEvent):
@@ -27,7 +31,7 @@ class InventoryUIManager(arcade.gui.UIManager):
             if self.dragged_tile is not None:
                 for widget in self.get_widgets_at(event.pos):
                     if isinstance(widget, InventorySlotWidget):
-                        if widget.item is None:
+                        if self.slot_can_receive_item(widget, self.dragged_tile):
                             diff_x = self.dragged_tile.center_x - widget.center_x
                             diff_y = self.dragged_tile.center_y - widget.center_y
                             self.dragged_tile.move(diff_x, diff_y)
@@ -41,3 +45,6 @@ class InventoryUIManager(arcade.gui.UIManager):
                 self.dragged_tile = None
 
         return super().on_event(event)
+
+    def slot_can_receive_item(self, slot: InventorySlotWidget, dragged_tile: InventoryViewTile):
+        return self.player.can_wear_item(dragged_tile.item, slot.wear_location)
