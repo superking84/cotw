@@ -4,6 +4,7 @@ import arcade
 from arcade.gui import UILabel
 
 import constants
+from game_objects.player import Player
 from ui.inventory_slot_widget import InventorySlotWidget
 from ui.inventory_ui_manager import InventoryUIManager
 from utils.enums import WearLocation
@@ -34,34 +35,48 @@ inventory_slot_data = [
 
 
 class InventoryView(arcade.View):
-    def __init__(self):
+    def __init__(self, player: Player):
         super().__init__()
 
-        self.manager = InventoryUIManager()
+        self.player = player
+        self.manager = InventoryUIManager(player)
+
         self.inventory: Dict[str, InventorySlotWidget] = {}
 
         for slot_data in inventory_slot_data:
             x = slot_data["column"] * INVENTORY_SLOT_WIDTH
             y = slot_data["row"] * INVENTORY_SLOT_HEIGHT
-            slot = InventorySlotWidget(x, y, INVENTORY_SLOT_WIDTH, INVENTORY_SLOT_HEIGHT,
-                                       slot_data["name"])  # .with_border()
+            widget = InventorySlotWidget(x, y, INVENTORY_SLOT_WIDTH, INVENTORY_SLOT_HEIGHT,
+                                         slot_data["wear_location"])
             label = UILabel(x, y, INVENTORY_SLOT_WIDTH, INVENTORY_SLOT_HEIGHT, text=slot_data["name"], font_size=10,
                             text_color=arcade.color.BLACK, align='center')
 
-            slot.add(label)
-            self.manager.add(slot)
+            widget.add(label)
+            self.manager.add(widget)
 
-            self.inventory[slot_data["name"]] = slot
+            self.inventory[slot_data["name"]] = widget
 
     def setup(self):
-        slot = self.inventory["Free Hand"]
-        test_item = Item(coin_img_src, slot.center_x, slot.center_y)
-        slot.item = test_item
-        test_item.sprite.center_x = slot.center_x
-        test_item.sprite.center_y = slot.center_y
-        self.manager.add(test_item.inventory_tile)
+        for (wear_location, item) in self.player.inventory.items():
+            print(wear_location)
+            if item is not None:
+                print(item.name)
+            else:
+                print("None")
 
-        pass
+        # slot1 = self.inventory["left hand"]
+        # test_item1 = Item(coin_img_src, slot1.center_x, slot1.center_y)
+        # slot1.item = test_item1
+        # test_item1.sprite.center_x = slot1.center_x
+        # test_item1.sprite.center_y = slot1.center_y
+        # self.manager.add(test_item1.inventory_tile)
+        #
+        # slot2 = self.inventory["Belt"]
+        # test_item2 = Item(coin_img_src, slot2.center_x, slot2.center_y)
+        # slot2.item = test_item1
+        # test_item2.sprite.center_x = slot2.center_x
+        # test_item2.sprite.center_y = slot2.center_y
+        # self.manager.add(test_item2.inventory_tile)
 
     def on_show_view(self):
         self.manager.enable()

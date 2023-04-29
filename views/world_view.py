@@ -13,15 +13,15 @@ enemy_img_src = "resources/images/zombie_idle.png"
 
 
 class WorldView(arcade.View):
-    def __init__(self):
+    def __init__(self, player: Player):
         super().__init__()
+        self.player = player
 
         self.camera = None
         self.gui_camera = None
         self.scene = None
         self.tile_map = None
 
-        self.player = None
         self.enemy = None
         self.enemies_by_sprite: Dict[arcade.Sprite, Enemy] = {}
 
@@ -41,16 +41,6 @@ class WorldView(arcade.View):
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite_list_after(constants.LAYER_NAME_PLAYER, constants.LAYER_NAME_WALLS)
         self.scene.add_sprite_list_after(constants.LAYER_NAME_ENEMIES, constants.LAYER_NAME_PLAYER)
-        image_source = "./resources/images/femaleAdventurer_idle.png"
-        self.player = Player(image_source, constants.PLAYER_START_X, constants.PLAYER_START_Y)
-        self.player.setup(
-            strength=10,
-            dexterity=10,
-            intelligence=10,
-            constitution=10,
-            health=50,
-            mana=25
-        )
 
         self.scene.add_sprite(constants.LAYER_NAME_PLAYER, self.player.sprite)
 
