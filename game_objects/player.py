@@ -78,3 +78,13 @@ class Player(Character):
                 move_y = 1
 
         return move_x, move_y
+
+    def can_wear_item(self, item: Item, wear_location: WearLocation):
+        if wear_location not in item.valid_wear_locations:
+            return False
+
+        if self.inventory[wear_location] is not None:
+            return False
+
+        # TODO: Additional checks to be done later, including but not limited to weight limitations
+        return True
