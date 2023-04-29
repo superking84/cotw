@@ -7,6 +7,7 @@ import constants
 from game_objects.player import Player
 from ui.inventory_slot_widget import InventorySlotWidget
 from ui.inventory_ui_manager import InventoryUIManager
+from ui.inventory_view_tile import InventoryViewTile
 from utils.enums import WearLocation
 
 coin_img_src = "resources/images/coinGold.png"
@@ -41,7 +42,7 @@ class InventoryView(arcade.View):
         self.player = player
         self.manager = InventoryUIManager(player)
 
-        self.inventory: Dict[str, InventorySlotWidget] = {}
+        self.inventory: Dict[WearLocation, InventorySlotWidget] = {}
 
         for slot_data in inventory_slot_data:
             x = slot_data["column"] * INVENTORY_SLOT_WIDTH
@@ -54,29 +55,18 @@ class InventoryView(arcade.View):
             widget.add(label)
             self.manager.add(widget)
 
-            self.inventory[slot_data["name"]] = widget
+            self.inventory[slot_data["wear_location"]] = widget
+            item = self.player.inventory[slot_data["wear_location"]]
+            if item is not None:
+                item.sprite.center_x = widget.center_x
+                item.sprite.center_y = widget.center_y
+                tile = InventoryViewTile(item)
+                widget.item_tile = tile
+
+                self.manager.add(widget.item_tile)
 
     def setup(self):
-        for (wear_location, item) in self.player.inventory.items():
-            print(wear_location)
-            if item is not None:
-                print(item.name)
-            else:
-                print("None")
-
-        # slot1 = self.inventory["left hand"]
-        # test_item1 = Item(coin_img_src, slot1.center_x, slot1.center_y)
-        # slot1.item = test_item1
-        # test_item1.sprite.center_x = slot1.center_x
-        # test_item1.sprite.center_y = slot1.center_y
-        # self.manager.add(test_item1.inventory_tile)
-        #
-        # slot2 = self.inventory["Belt"]
-        # test_item2 = Item(coin_img_src, slot2.center_x, slot2.center_y)
-        # slot2.item = test_item1
-        # test_item2.sprite.center_x = slot2.center_x
-        # test_item2.sprite.center_y = slot2.center_y
-        # self.manager.add(test_item2.inventory_tile)
+        pass
 
     def on_show_view(self):
         self.manager.enable()
