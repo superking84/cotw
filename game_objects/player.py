@@ -30,7 +30,8 @@ class Player(Character):
         self.health = health
         self.mana = mana
 
-        self.inventory[WearLocation.LEFT_HAND] = Item("Coin", "resources/images/coinGold.png", -1, -1)
+        self.inventory[WearLocation.LEFT_HAND] = Item("Coin", "resources/images/zombie_idle.png")
+        self.inventory[WearLocation.RIGHT_HAND] = Item("Coin", "resources/images/coinGold.png")
 
     def on_key_press(self, key: arcade.key):
         if key in constants.MOVEMENT_KEYS:
