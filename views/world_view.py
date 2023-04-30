@@ -9,7 +9,7 @@ from game_objects.player import Player
 from utils.enums import ActionType
 from utils.game_timer import GameTimer
 
-enemy_img_src = "resources/images/zombie_idle.png"
+enemy_img_src = "resources/images/enemies/zombie_idle.png"
 
 
 class WorldView(arcade.View):
