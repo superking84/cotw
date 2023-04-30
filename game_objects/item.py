@@ -12,7 +12,7 @@ class Item:
     """
 
     def __init__(self, name: str, img_src: str):
-        self.sprite = arcade.Sprite(img_src, constants.CHARACTER_SCALING, center_x=-1, center_y=-1)
+        self.sprite = arcade.Sprite(img_src, constants.CHARACTER_SCALING)
 
         self.name = name
         self.weight = 0
