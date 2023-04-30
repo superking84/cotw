@@ -1,8 +1,8 @@
 from typing import Optional
 
 import arcade.gui
-from arcade.gui.events import UIMouseDragEvent, UIMouseEvent
-from arcade.gui.widgets import UIWidget, UILayout
+from arcade.gui.events import UIMouseDragEvent
+from arcade.gui.widgets import UILayout
 from pyglet.event import EVENT_HANDLED, EVENT_UNHANDLED
 
 
@@ -45,31 +45,3 @@ class UIDraggableMixin(UILayout):
             return EVENT_HANDLED
 
         return EVENT_UNHANDLED
-
-
-class UIMouseFilterMixin(UIWidget):
-    """
-    :class:`UIMouseFilterMixin` can be used to catch all mouse events which occur inside this widget.
-
-    Useful for window like widgets, :class:`UIMouseEvents` should not trigger effects which are under the widget.
-    """
-
-    def on_event(self, event) -> Optional[bool]:
-        if super().on_event(event):
-            return EVENT_HANDLED
-
-        if isinstance(event, UIMouseEvent):
-            # Catch all mouse events, that are inside this widget, to act like a window
-            if self.rect.collide_with_point(*event.pos):
-                return EVENT_HANDLED
-
-        return EVENT_UNHANDLED
-
-
-class UIWindowLikeMixin(UIMouseFilterMixin, UIDraggableMixin, UIWidget):
-    """
-    Makes a widget window like:
-
-    - handles all mouse events that occur within the widgets boundaries
-    - can be dragged
-    """

@@ -1,10 +1,10 @@
-from arcade.gui import UISpriteWidget
+from arcade.gui import UISpriteWidget, UIWidget
 
 from game_objects.item import Item
-from ui.mixins import UIWindowLikeMixin
+from ui.mixins import UIDraggableMixin
 
 
-class InventoryViewTile(UISpriteWidget, UIWindowLikeMixin):
+class InventoryViewTile(UISpriteWidget, UIDraggableMixin, UIWidget):
     def __init__(self, item: Item):
         self.item = item
         sprite = item.sprite
