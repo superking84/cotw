@@ -40,7 +40,7 @@ class GameTimer:
 
             self.listeners.pop(listener_index)
 
-    def advance_time(self, elapsed_time: Optional[int]):
+    def advance_time(self, elapsed_time: Optional[int] = None):
         """
         Increase the elapsed in-game time by the specified number of seconds.
         :param elapsed_time: An amount of time in seconds.
@@ -64,7 +64,7 @@ class GameTimer:
         if self.player_has_control:
             return
 
-        self.advance_time(None)
+        self.advance_time()
 
     def update_game_time(self, elapsed_time: int):
         """
