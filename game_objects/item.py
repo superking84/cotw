@@ -18,5 +18,4 @@ class Item:
         self.weight = 0
         self.size = 0
 
-        self.valid_wear_locations: List[WearLocation] = [WearLocation.LEFT_HAND, WearLocation.RIGHT_HAND,
-                                                         WearLocation.BELT]
+        self.valid_wear_locations: List[WearLocation] = [WearLocation.LEFT_HAND, WearLocation.RIGHT_HAND]
