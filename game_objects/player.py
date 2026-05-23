@@ -4,6 +4,7 @@ import arcade
 
 import constants
 from game_objects.character import Character
+from game_objects.container import Container
 from game_objects.equipment import Equipment
 from game_objects.item import Item
 from utils.enums import WearLocation
@@ -37,6 +38,11 @@ class Player(Character):
             "Helmet",
             "resources/images/items/flagGreen1.png",
             [WearLocation.HELMET, WearLocation.BELT],
+        )
+        self.inventory[WearLocation.BACKPACK] = Container(
+            "Backpack",
+            "resources/images/items/backpack.png",
+            [WearLocation.BACKPACK],
         )
 
     def on_key_press(self, key: arcade.key):

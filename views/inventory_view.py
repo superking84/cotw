@@ -12,10 +12,6 @@ from utils.enums import WearLocation
 
 coin_img_src = "resources/images/coinGold.png"
 
-INVENTORY_SLOT_BORDER = 2
-INVENTORY_SLOT_HEIGHT = (constants.SCREEN_HEIGHT / 6) - (INVENTORY_SLOT_BORDER * 2)
-INVENTORY_SLOT_WIDTH = (INVENTORY_SLOT_HEIGHT * (4 / 5.0)) - (INVENTORY_SLOT_BORDER * 2)
-
 inventory_slot_data = [
     {"wear_location": WearLocation.ARMOR, "name": "Armor", "row": 5, "column": 0},
     {"wear_location": WearLocation.NECKWEAR, "name": "Neckwear", "row": 5, "column": 1},
@@ -24,10 +20,10 @@ inventory_slot_data = [
     {"wear_location": WearLocation.SHIELD, "name": "Shield", "row": 5, "column": 4},
     {"wear_location": WearLocation.BRACERS, "name": "Bracers", "row": 4, "column": 0},
     {"wear_location": WearLocation.GAUNTLETS, "name": "Gauntlets", "row": 4, "column": 4},
-    {"wear_location": WearLocation.RIGHT_HAND, "name": "right hand", "row": 3, "column": 0},
-    {"wear_location": WearLocation.LEFT_HAND, "name": "left hand", "row": 3, "column": 4},
-    {"wear_location": WearLocation.RIGHT_RING, "name": "Right Ring", "row": 2, "column": 0},
-    {"wear_location": WearLocation.LEFT_RING, "name": "Left Ring", "row": 2, "column": 4},
+    {"wear_location": WearLocation.RIGHT_HAND, "name": "R Hand", "row": 3, "column": 0},
+    {"wear_location": WearLocation.LEFT_HAND, "name": "L Hand", "row": 3, "column": 4},
+    {"wear_location": WearLocation.RIGHT_RING, "name": "R Ring", "row": 2, "column": 0},
+    {"wear_location": WearLocation.LEFT_RING, "name": "L Ring", "row": 2, "column": 4},
     {"wear_location": WearLocation.BELT, "name": "Belt", "row": 1, "column": 0},
     {"wear_location": WearLocation.BOOTS, "name": "Boots", "row": 1, "column": 4},
     {"wear_location": WearLocation.BACKPACK, "name": "Backpack", "row": 0, "column": 0},
@@ -45,11 +41,11 @@ class InventoryView(arcade.View):
         self.inventory: Dict[WearLocation, InventorySlotWidget] = {}
 
         for slot_data in inventory_slot_data:
-            x = slot_data["column"] * INVENTORY_SLOT_WIDTH
-            y = slot_data["row"] * INVENTORY_SLOT_HEIGHT
-            widget = InventorySlotWidget(x, y, INVENTORY_SLOT_WIDTH, INVENTORY_SLOT_HEIGHT,
+            x = slot_data["column"] * constants.INVENTORY_SLOT_WIDTH
+            y = slot_data["row"] * constants.INVENTORY_SLOT_HEIGHT
+            widget = InventorySlotWidget(x, y, constants.INVENTORY_SLOT_WIDTH, constants.INVENTORY_SLOT_HEIGHT,
                                          slot_data["wear_location"])
-            label = UILabel(x, y, INVENTORY_SLOT_WIDTH, INVENTORY_SLOT_HEIGHT, text=slot_data["name"], font_size=10,
+            label = UILabel(x, y, constants.INVENTORY_SLOT_WIDTH, constants.INVENTORY_SLOT_HEIGHT, text=slot_data["name"], font_size=10,
                             text_color=arcade.color.BLACK, align='center')
 
             widget.add(label)
@@ -77,6 +73,15 @@ class InventoryView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
+        if self.manager.open_container is not None:
+            arcade.draw_lrtb_rectangle_outline(
+                constants.CONTAINER_PANEL_X,
+                constants.CONTAINER_PANEL_X + constants.CONTAINER_PANEL_WIDTH,
+                constants.CONTAINER_PANEL_Y + constants.CONTAINER_PANEL_HEIGHT,
+                constants.CONTAINER_PANEL_Y,
+                color=arcade.color.WHITE,
+                border_width=constants.CONTAINER_PANEL_BORDER
+            )
 
     def on_update(self, delta_time: float):
         pass
