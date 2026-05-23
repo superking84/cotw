@@ -4,6 +4,7 @@ import arcade
 
 import constants
 from game_objects.character import Character
+from game_objects.equipment import Equipment
 from game_objects.item import Item
 from utils.enums import WearLocation
 
@@ -31,7 +32,12 @@ class Player(Character):
         self.mana = mana
 
         self.inventory[WearLocation.LEFT_HAND] = Item("Coin", "resources/images/items/gemBlue.png")
-        self.inventory[WearLocation.RIGHT_HAND] = Item("Coin", "resources/images/items/coinGold.png")
+        # self.inventory[WearLocation.RIGHT_HAND] = Item("Coin", "resources/images/items/coinGold.png")
+        self.inventory[WearLocation.HELMET] = Equipment(
+            "Helmet",
+            "resources/images/items/flagGreen1.png",
+            [WearLocation.HELMET, WearLocation.BELT],
+        )
 
     def on_key_press(self, key: arcade.key):
         if key in constants.MOVEMENT_KEYS:

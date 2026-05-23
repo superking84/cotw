@@ -2,9 +2,10 @@ from typing import Optional
 
 import arcade.gui
 
+from game_objects.container import Container
 from game_objects.player import Player
 from ui.inventory_slot_widget import InventorySlotWidget
-from ui.inventory_view_tile import InventoryViewTile
+from ui.inventory_view_tile import InventoryViewTile, GhostTile
 
 
 class InventoryUIManager(arcade.gui.UIManager):
@@ -24,6 +25,17 @@ class InventoryUIManager(arcade.gui.UIManager):
                 if isinstance(widget, InventorySlotWidget):
                     self.origin_slot = widget
 
+            if self.dragged_tile is not None and self.origin_slot is not None:
+                ghost = GhostTile(
+                    self.dragged_tile.item,
+                    x=self.dragged_tile.rect.x,
+                    y=self.dragged_tile.rect.y,
+                    width=self.dragged_tile.rect.width,
+                    height=self.dragged_tile.rect.height
+                )
+                self.origin_slot.ghost_tile = ghost
+                self.add(ghost)
+
         if isinstance(event, arcade.gui.events.UIMouseDragEvent):
             if self.dragged_tile is not None:
                 self.dragged_tile.total_dx += event.dx
@@ -39,15 +51,22 @@ class InventoryUIManager(arcade.gui.UIManager):
                             diff_y = widget.center_y - self.dragged_tile.center_y
                             self.dragged_tile.move(diff_x, diff_y)
                             return_tile = False
-
                             self.move_tile(self.dragged_tile, self.origin_slot, widget)
+                        elif self.slot_has_container(widget):
+                            return_tile = False
+                            self.drop_tile_into_container(self.dragged_tile, self.origin_slot, widget)
 
                 if return_tile:
                     self.dragged_tile.move(-self.dragged_tile.total_dx, -self.dragged_tile.total_dy)
 
+                if self.origin_slot is not None and self.origin_slot.ghost_tile is not None:
+                    self.remove(self.origin_slot.ghost_tile)
+                    self.origin_slot.ghost_tile = None
+
                 self.dragged_tile.total_dx = 0
                 self.dragged_tile.total_dy = 0
                 self.dragged_tile = None
+                self.origin_slot = None  # ADD THIS: reset origin_slot too
 
         return super().on_event(event)
 
@@ -60,3 +79,16 @@ class InventoryUIManager(arcade.gui.UIManager):
 
         self.player.inventory[from_slot.wear_location] = None
         self.player.inventory[to_slot.wear_location] = tile.item
+
+    def slot_has_container(self, slot: InventorySlotWidget) -> bool:
+        item = self.player.inventory[slot.wear_location]
+        return isinstance(item, Container)
+
+    def drop_tile_into_container(self, tile: InventoryViewTile, from_slot: InventorySlotWidget,
+                                 container_slot: InventorySlotWidget):
+        container: Container = self.player.inventory[container_slot.wear_location]
+        container.add_item(tile.item)
+
+        self.player.inventory[from_slot.wear_location] = None
+        from_slot.item_tile = None
+        self.remove(tile)

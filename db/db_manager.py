@@ -9,5 +9,5 @@ class DBManager:
 
         # cursor.execute("DROP TABLE game_save")
         cursor.execute("CREATE TABLE IF NOT EXISTS game_save (id INTEGER NOT NULL PRIMARY KEY, name TEXT)")
-        cursor.execute("INSERT INTO game_save (name) VALUES ('first save')")
+        cursor.execute("INSERT OR IGNORE INTO game_save (name) VALUES ('first save')")
         connection.commit()

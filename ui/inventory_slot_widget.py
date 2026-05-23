@@ -2,7 +2,7 @@ from typing import Optional
 
 from arcade.gui import UIWidget
 
-from ui.inventory_view_tile import InventoryViewTile
+from ui.inventory_view_tile import InventoryViewTile, GhostTile
 from utils.enums import WearLocation
 
 
@@ -12,3 +12,4 @@ class InventorySlotWidget(UIWidget):
 
         self.wear_location: WearLocation = wear_location
         self.item_tile: Optional[InventoryViewTile] = None  # the item being held in the inventory slot
+        self.ghost_tile: Optional[GhostTile] = None

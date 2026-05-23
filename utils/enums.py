@@ -18,8 +18,8 @@ class WearLocation(Enum):
     RIGHT_HAND = 8
     LEFT_HAND = 9
     RIGHT_RING = 10
-    LEFT_RING = 10
-    BELT = 11
-    BOOTS = 12
-    BACKPACK = 13
-    PURSE = 14
+    LEFT_RING = 11
+    BELT = 12
+    BOOTS = 13
+    BACKPACK = 14
+    PURSE = 15
